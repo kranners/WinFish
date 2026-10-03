@@ -4,6 +4,28 @@ Based on reverse engineering of Windows executable distributed on PopCap.com.
 
 Status: Fully playable, still has bugs and inaccuracies.
 
+## Modding setup (this fork)
+
+This fork of [Vindirect/WinFish](https://github.com/Vindirect/WinFish) adds a scripted build-and-run loop for modding on Windows.
+
+**Requirements:** Visual Studio 2022 or Build Tools 2022 with MSVC v143 (x86/x64) and a Windows SDK, plus your own copy of Insaniquarium Deluxe (Steam).
+
+```powershell
+.\scripts\setup-assets.ps1   # copy bass.dll + asset folders from your Steam install (gitignored)
+.\scripts\build.ps1          # MSBuild, Debug|Win32 -> Win32\Debug\Insaniquarium.exe
+.\scripts\run.ps1            # build, then launch
+```
+
+In VS Code (with the C/C++ extension): `Ctrl+Shift+B` builds and `F5` builds and launches under the debugger.
+
+The mod runs under its own registry key (`HKCU\Software\PopCap\InsaniquariumMod`) and save folder (`C:\ProgramData\PopCap Games\InsaniquariumMod`), so it never touches the retail game's settings or saves. It starts windowed. See `source/WinFish/ModConfig.h`.
+
+Only `Debug|Win32` is fully configured upstream. CI compiles every push without game assets.
+
+To pull in upstream fixes: `git fetch upstream; git merge upstream/master`.
+
+---
+
 ### Dependencies
 
 - Visual Studio

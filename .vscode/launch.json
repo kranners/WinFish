@@ -1,0 +1,15 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Insaniquarium (Debug)",
+      "type": "cppvsdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}\\Win32\\Debug\\Insaniquarium.exe",
+      "args": [],
+      "cwd": "${workspaceFolder}\\Win32\\Debug",
+      "stopAtEntry": false,
+      "preLaunchTask": "Build"
+    }
+  ]
+}

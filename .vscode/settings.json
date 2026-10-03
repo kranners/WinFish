@@ -1,0 +1,10 @@
+{
+  "C_Cpp.default.intelliSenseMode": "windows-msvc-x86",
+  "C_Cpp.default.cppStandard": "c++14",
+  "C_Cpp.default.includePath": ["${workspaceFolder}\\source", "${workspaceFolder}\\source\\WinFish"],
+  "C_Cpp.default.defines": ["WIN32", "_DEBUG", "_WINDOWS"],
+  "files.exclude": {
+    "**/Win32": true,
+    "**/DebugVS2005": true
+  }
+}
