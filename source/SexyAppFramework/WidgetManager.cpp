@@ -148,7 +148,8 @@ void WidgetManager::FlushDeferredOverlayWidgets(int theMaxPriority)
 					// Overlays don't get clipped
 					Graphics g(*mCurG);
 					g.Translate(-mMouseDestRect.mX, -mMouseDestRect.mY);
-					g.Translate(aWidget->mX, aWidget->mY);
+					Point anAbsPos = aWidget->GetAbsPos(); // == mX/mY for root-level widgets
+					g.Translate(anAbsPos.mX, anAbsPos.mY);
 					g.SetFastStretch(!g.Is3D());
 					g.SetLinearBlend(g.Is3D());
 
@@ -181,12 +182,15 @@ void WidgetManager::FlushDeferredOverlayWidgets(int theMaxPriority)
 void WidgetManager::DoMouseUps(Widget* theWidget, ulong theDownCode)
 {
 	int aClickCountTable[3] = { 1,-1, 3 };
+	// mLastMouseX/Y are root coordinates; convert with the widget's absolute position so
+	// widgets nested inside another widget get correct local coordinates.
+	Point anAbsPos = theWidget->GetAbsPos();
 	for (int i = 0; i < 3; i++)
 	{
 		if ((theDownCode & (1 << i)) != 0)
 		{
 			theWidget->mIsDown = false;
-			theWidget->MouseUp(mLastMouseX - theWidget->mX, mLastMouseY - theWidget->mY, aClickCountTable[i]);
+			theWidget->MouseUp(mLastMouseX - anAbsPos.mX, mLastMouseY - anAbsPos.mY, aClickCountTable[i]);
 		}
 	}
 }
@@ -593,7 +597,9 @@ bool WidgetManager::MouseUp(int x, int y, int theClickCount)
 			mLastDownWidget = NULL;
 
 		aLastDownWidget->mIsDown = false;
-		aLastDownWidget->MouseUp(x - aLastDownWidget->mX, y - aLastDownWidget->mY, theClickCount);
+		// x/y are root coordinates; use the absolute position for nested widgets.
+		Point anAbsPos = aLastDownWidget->GetAbsPos();
+		aLastDownWidget->MouseUp(x - anAbsPos.mX, y - anAbsPos.mY, theClickCount);
 	}	
 	else
 		mDownButtons &= ~aMask;		
@@ -635,9 +641,16 @@ bool WidgetManager::MouseDown(int x, int y, int theClickCount)
 	}
 */
 	// Option 2
-	// This code passes all button downs to the mLastDownWidget 
-	if (mLastDownWidget != NULL)
+	// This code passes all button downs to the mLastDownWidget
+	if ((mLastDownWidget != NULL) && (mLastDownWidget != aWidget))
+	{
+		// aWidgetX/Y were computed for the widget under the mouse (or not at all if there
+		// is none); recompute them for mLastDownWidget from its absolute position.
 		aWidget = mLastDownWidget;
+		Point anAbsPos = aWidget->GetAbsPos();
+		aWidgetX = x - anAbsPos.mX;
+		aWidgetY = y - anAbsPos.mY;
+	}
 
 	// End mouse down options
 

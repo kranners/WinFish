@@ -296,6 +296,7 @@ int DDInterface::Init(HWND theWindow, bool IsWindowed)
 	mApp->mScreenBounds = mPresentationRect;
 	mFullscreenBits = mApp->mFullscreenBits;
 	mIsWindowed = IsWindowed;
+	mIsWidescreen = false;
 	mHasOldCursorArea = false;
 
 	OutputDebug(_S("Application requests %4lu x %4lu [%2d:%2d]\n"), mWidth, mHeight, mAspect.mNumerator, mAspect.mDenominator);

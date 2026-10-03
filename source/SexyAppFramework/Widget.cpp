@@ -191,8 +191,14 @@ void Widget::SetDisabled(bool isDisabled)
 	MarkDirty();
 	
 	// Incase a widget is enabled right under our cursor
-	if ((!isDisabled) && (mWidgetManager != NULL) && (Contains(mWidgetManager->mLastMouseX, mWidgetManager->mLastMouseY)))
-		mWidgetManager->MousePosition(mWidgetManager->mLastMouseX, mWidgetManager->mLastMouseY);
+	// (mLastMouseX/Y are root coordinates and Contains() takes parent-local ones, so subtract
+	// the parent's absolute position; it is (0,0) for root-level widgets.)
+	if ((!isDisabled) && (mWidgetManager != NULL))
+	{
+		Point aParentPos = (mParent != NULL) ? mParent->GetAbsPos() : Point(0, 0);
+		if (Contains(mWidgetManager->mLastMouseX - aParentPos.mX, mWidgetManager->mLastMouseY - aParentPos.mY))
+			mWidgetManager->MousePosition(mWidgetManager->mLastMouseX, mWidgetManager->mLastMouseY);
+	}
 }
 
 void Widget::GotFocus()
