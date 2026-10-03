@@ -3,6 +3,7 @@
 #include "SexyApp.h"
 #include "InternetManager.h"
 #include "BetaSupport.h"
+#include "ModConfig.h"
 
 #include <time.h>
 #include <fstream>
@@ -475,6 +476,10 @@ void SexyApp::InitPropertiesHook()
 	// Load properties if we need to
 	bool checkSig = !IsScreenSaver();
 	LoadProperties("properties\\partner.xml", false, checkSig);
+
+	SetString("ProdName", StringToWString(MOD_PROD_NAME));
+	SetString("RegistryKey", StringToWString(MOD_REGISTRY_KEY));
+	SetBoolean("DefaultWindowed", MOD_DEFAULT_WINDOWED);
 
 	// Check to see if this build is unlocked.
 	if (GetBoolean("NoReg", false))
