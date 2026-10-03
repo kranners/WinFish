@@ -7,6 +7,7 @@
 #include "Shadow.h"
 #include "Food.h"
 #include "Res.h"
+#include "ModConfig.h"
 
 Sexy::BallFish::BallFish()
 {
@@ -412,7 +413,7 @@ void Sexy::BallFish::Init()
 	mIsGuppy = false;
 	mSize = SIZE_SMALL;
 	mYMin = 105;
-	mYMax = 360;
+	mYMax = 360 + MOD_EXTRA_HEIGHT;
 	mMouseVisible = gUnkBool06;
 	mCoinDropT = DetermineCoinDropT(mApp->mSeed->Next() % 250 + 200);
 	mWidth = 50;

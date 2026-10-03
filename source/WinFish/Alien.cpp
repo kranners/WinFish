@@ -11,6 +11,7 @@
 #include "Warp.h"
 #include "Coin.h"
 #include "Res.h"
+#include "ModConfig.h"
 
 
 Sexy::Alien::Alien()
@@ -101,8 +102,8 @@ Sexy::Alien::Alien(int theX, int theY, int theAlienType)
 		mHealth = 150.0;
 		if (mApp->mGameMode != GAMEMODE_VIRTUAL_TANK)
 		{
-			mY = 280;
-			mYD = 280.0;
+			mY = 280 + MOD_EXTRA_HEIGHT;
+			mYD = 280.0 + MOD_EXTRA_HEIGHT;
 		}
 	}
 	else if (theAlienType == ALIEN_ULYSEES)
@@ -111,8 +112,8 @@ Sexy::Alien::Alien(int theX, int theY, int theAlienType)
 		mHealth = 220.0;
 		if (mApp->mGameMode != GAMEMODE_VIRTUAL_TANK)
 		{
-			mY = 280;
-			mYD = 280.0;
+			mY = 280 + MOD_EXTRA_HEIGHT;
+			mYD = 280.0 + MOD_EXTRA_HEIGHT;
 		}
 	}
 	else if (theAlienType == ALIEN_PSYCHOSQUID)
@@ -151,9 +152,9 @@ void Sexy::Alien::Update()
 
 	if ((mAlienType == ALIEN_DESTRUCTOR || mAlienType == ALIEN_ULYSEES) && mApp->mGameMode == GAMEMODE_VIRTUAL_TANK)
 	{
-		if (mYD >= 280.0)
+		if (mYD >= 280.0 + MOD_EXTRA_HEIGHT)
 		{
-			mYD = 280.0;
+			mYD = 280.0 + MOD_EXTRA_HEIGHT;
 			mVY = 0;
 		}
 		else
@@ -246,23 +247,23 @@ void Sexy::Alien::Update()
 
 	if (mAlienType == ALIEN_MINI_SYLV)
 	{
-		if (mXD > 540.0)
-			mXD = 540.0;
+		if (mXD > 540.0 + MOD_EXTRA_WIDTH)
+			mXD = 540.0 + MOD_EXTRA_WIDTH;
 		if (mXD < 10.0)
 			mXD = 10.0;
-		if (mYD > 370.0)
-			mYD = 370.0;
+		if (mYD > 370.0 + MOD_EXTRA_HEIGHT)
+			mYD = 370.0 + MOD_EXTRA_HEIGHT;
 		if (mYD < 95.0)
 			mYD = 95.0;
 	}
 	else
 	{
-		if (mXD > 490.0)
-			mXD = 490.0;
+		if (mXD > 490.0 + MOD_EXTRA_WIDTH)
+			mXD = 490.0 + MOD_EXTRA_WIDTH;
 		if (mXD < -10.0)
 			mXD = -10.0;
-		if (mYD > 290.0)
-			mYD = 290.0;
+		if (mYD > 290.0 + MOD_EXTRA_HEIGHT)
+			mYD = 290.0 + MOD_EXTRA_HEIGHT;
 		if (mYD < 85.0)
 			mYD = 85.0;
 	}

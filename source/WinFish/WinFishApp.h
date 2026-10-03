@@ -9,6 +9,9 @@
 namespace Sexy
 {
 	class Board;
+	class ModBackdrop;
+	class MemoryImage;
+	class Dialog;
 	class TitleScreen;
 	class GameSelector;
 	class PetsScreen;
@@ -186,6 +189,7 @@ namespace Sexy
 	class WinFishApp : public SexyApp
 	{
 	public:
+		ModBackdrop*					mBackdrop;
 		Board*							mBoard;
 		TitleScreen*					mTitleScreen;
 		GameSelector*					mGameSelector;
@@ -268,6 +272,9 @@ namespace Sexy
 		void						StartGameMusic();
 		void						SomeMusicPlayFunc(bool flag);
 		Image*						LoadMaskImage(Image* theImage, Image* theImageMask, int theX, int theY);
+		MemoryImage*				ModScaleImage(Image* theImage, int theCropY);
+		using						SexyApp::AddDialog;
+		virtual void				AddDialog(int theDialogId, Dialog* theDialog);
 		void						StartScreenSaver();
 		void						SetScreenSaver(const char* thePath);
 		void						ReadSSFromRegistry();

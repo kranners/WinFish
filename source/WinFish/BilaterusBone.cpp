@@ -5,6 +5,7 @@
 #include "Board.h"
 #include "Fish.h"
 #include "Res.h"
+#include "ModConfig.h"
 
 Sexy::BilaterusBone::BilaterusBone(Bilaterus* theBilaterus, int theX, int theY, int theBoneId)
 {
@@ -24,12 +25,12 @@ Sexy::BilaterusBone::BilaterusBone(Bilaterus* theBilaterus, int theX, int theY, 
 		m0x170 = -0.1;
 		m0x198 = -1.0;
 	}
-	m0x1a0 = 370;
+	m0x1a0 = 370 + MOD_EXTRA_HEIGHT;
 	m0x180 = 0;
 	m0x1a8 = 95;
 	m0x188 = 0;
 	m0x1a4 = 10;
-	m0x1ac = 540;
+	m0x1ac = 540 + MOD_EXTRA_WIDTH;
 	m0x190 = 0.8;
 	m0x1c0 = 100;
 	m0x1b0 = 0;
@@ -99,6 +100,8 @@ void Sexy::BilaterusBone::Sync(DataSync* theSync)
 	theSync->SyncLong(m0x1a4);
 	theSync->SyncLong(m0x1a8);
 	theSync->SyncLong(m0x1ac);
+	if (theSync->mReader != NULL)
+		ModMigrateBounds(m0x1ac, m0x1a8, m0x1a0);
 	theSync->SyncLong(m0x1b0);
 	theSync->SyncLong(m0x1b4);
 	theSync->SyncLong(m0x1b8);

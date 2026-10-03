@@ -162,17 +162,21 @@ void Sexy::DrawVertCrease(Graphics* g, Image* theImage, int theX, int theY, int 
 
 void Sexy::DrawCheckboxString(Graphics* g, const SexyString& theLine, Checkbox* theCB, const char* theExtensionString)
 {
+    // g->mTransX/Y is the absolute position of whichever widget is drawing, so compare it with
+    // the checkbox's absolute position (its mX/mY is relative to its parent, which may be a
+    // screen or a dialog rather than the root manager).
+    Point aCBPos = theCB->GetAbsPos();
     if (theExtensionString == nullptr)
     {
-        g->DrawString(theLine, theCB->mX - g->mTransX + 43, theCB->mY - g->mTransY + 24);
+        g->DrawString(theLine, aCBPos.mX - g->mTransX + 43, aCBPos.mY - g->mTransY + 24);
     }
     else
     {
-        g->DrawString(theLine, theCB->mX - g->mTransX + 43, theCB->mY - g->mTransY + 15);
+        g->DrawString(theLine, aCBPos.mX - g->mTransX + 43, aCBPos.mY - g->mTransY + 15);
 
-        SexyString aStr; 
+        SexyString aStr;
         aStr.assign(theExtensionString);
-        g->DrawString(aStr, theCB->mX - g->mTransX + 43, theCB->mY - g->mTransY + 30);
+        g->DrawString(aStr, aCBPos.mX - g->mTransX + 43, aCBPos.mY - g->mTransY + 30);
     }
 }
 

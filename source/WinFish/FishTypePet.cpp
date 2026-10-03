@@ -12,6 +12,7 @@
 #include "Food.h"
 #include "BoxingGlove.h"
 #include "Res.h"
+#include "ModConfig.h"
 
 const int gConst01 = 360;
 
@@ -62,13 +63,13 @@ Sexy::FishTypePet::FishTypePet(int theX, int theY, int thePetType, bool flag)
 	else if (thePetType == PET_PREGO)
 	{
 		mCoinDropT = 930;
-		mYMax = 360;
+		mYMax = 360 + MOD_EXTRA_HEIGHT;
 	}
 	else if (thePetType == PET_ZORF)
 	{
 		mCoinDropT = 65;
 		mSpeedMod = 3.0;
-		mYMax = 270;
+		mYMax = 270 + MOD_EXTRA_HEIGHT;
 	}
 	else if (thePetType == PET_MERYL)
 	{
@@ -105,7 +106,7 @@ Sexy::FishTypePet::FishTypePet(int theX, int theY, int thePetType, bool flag)
 	else if (thePetType == PET_NIMBUS)
 	{
 		mSpeedMod = 0.5;
-		mYMin = 320;
+		mYMin = 320 + MOD_EXTRA_HEIGHT;
 	}
 	else if (thePetType == PET_AMP)
 	{
@@ -113,7 +114,7 @@ Sexy::FishTypePet::FishTypePet(int theX, int theY, int thePetType, bool flag)
 		mCoinDropT = 3000;
 		mWidth = 160;
 		mHeight = 80;
-		mXMax = 460;
+		mXMax = 460 + MOD_EXTRA_WIDTH;
 		mCoinDropTimer = 300;
 		mMouseInsets.mTop = 0;
 		mMouseInsets.mBottom = 25;
@@ -248,7 +249,7 @@ void Sexy::FishTypePet::Update()
 					mVXAbs--;
 			}
 
-			if (mYD > 240.0)
+			if (mYD > 240.0 + MOD_EXTRA_HEIGHT / 2)
 				mMovementState = 0;
 		}
 		else if (mMovementState == 4)
@@ -276,7 +277,7 @@ void Sexy::FishTypePet::Update()
 					mVXAbs--;
 			}
 
-			if (mYD > 240.0)
+			if (mYD > 240.0 + MOD_EXTRA_HEIGHT / 2)
 				mMovementState = 0;
 		}
 		else if (mMovementState < 0)
@@ -303,7 +304,7 @@ void Sexy::FishTypePet::Update()
 						mVX += 1.0;
 
 					mVXAbs = (int)abs(mVX);
-					if (mXD > 250.0)
+					if (mXD > 250.0 + MOD_EXTRA_WIDTH / 2)
 					{
 						mXDirection = -1;
 						mVX -= mVXAbs; // Maybe Incorrect TODO
@@ -317,7 +318,7 @@ void Sexy::FishTypePet::Update()
 						mVX -= 1.0;
 
 					mVXAbs = (int)abs(mVX);
-					if (mXD < 175.0)
+					if (mXD < 175.0 + MOD_EXTRA_WIDTH / 2)
 					{
 						mXDirection = 1;
 						mVX += mVXAbs; // Maybe Incorrect TODO
@@ -924,14 +925,14 @@ bool Sexy::FishTypePet::HungryBehavior()
 		else if (mFishTypePetType == PET_GUMBO)
 		{
 			int aDist = (aFood->mType == TYPE_BILATERUS) ? 40 : 80;
-			if (aFood->mY + aDist > 260 && mVY > -8.0)
+			if (aFood->mY + aDist > 260 + MOD_EXTRA_HEIGHT / 2 && mVY > -8.0)
 				mVY -= 2.0;
-			else if (aFood->mY + aDist < 300 && mVY < 8.0)
+			else if (aFood->mY + aDist < 300 + MOD_EXTRA_HEIGHT / 2 && mVY < 8.0)
 				mVY += 2.0;
 
-			if (aFood->mX + aDist > 290 && mVX > -8.0)
+			if (aFood->mX + aDist > 290 + MOD_EXTRA_WIDTH / 2 && mVX > -8.0)
 				mVX -= 2.0;
-			else if (aFood->mX + aDist < 330 && mVX < 8.0)
+			else if (aFood->mX + aDist < 330 + MOD_EXTRA_WIDTH / 2 && mVX < 8.0)
 				mVX += 2.0;
 		}
 		else if (mFishTypePetType == PET_ANGIE)

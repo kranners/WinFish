@@ -4,6 +4,7 @@
 #include "Board.h"
 #include "WinFishApp.h"
 #include "Res.h"
+#include "ModConfig.h"
 
 using namespace Sexy;
 
@@ -81,10 +82,10 @@ void Sexy::Food::Update()
 			mYD += 1.5;
 		else
 		{
-			if (mXD > 550.0)
-				mXD = mXD - (mXD - 550.0) / 7.0;
-			else if (mXD < 550.0)
-				mXD = mXD + (550.0 - mXD) / 7.0;
+			if (mXD > 550.0 + MOD_HUD_X)
+				mXD = mXD - (mXD - (550.0 + MOD_HUD_X)) / 7.0;
+			else if (mXD < 550.0 + MOD_HUD_X)
+				mXD = mXD + (550.0 + MOD_HUD_X - mXD) / 7.0;
 
 			if (mYD > 30.0)
 				mYD = mYD - (mYD - 30.0) / 7.0;
@@ -137,13 +138,13 @@ void Sexy::Food::Update()
 			mXD += mVX;
 		}
 
-		if (mXD > 550.0)
-			mXD = 550.0;
+		if (mXD > 550.0 + MOD_EXTRA_WIDTH)
+			mXD = 550.0 + MOD_EXTRA_WIDTH;
 		else if (mXD < 20.0)
 			mXD = 20.0;
 	}
 
-	if (mYD > 410.0 || (mFoodType == 3 && mYD > 400.0))
+	if (mYD > 410.0 + MOD_EXTRA_HEIGHT || (mFoodType == 3 && mYD > 400.0 + MOD_EXTRA_HEIGHT))
 	{
 		if (mFoodType == 3)
 		{

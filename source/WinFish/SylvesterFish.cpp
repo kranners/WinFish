@@ -7,6 +7,7 @@
 #include "Shadow.h"
 #include "Coin.h"
 #include "Res.h"
+#include "ModConfig.h"
 
 Sexy::SylvesterFish::SylvesterFish()
 {
@@ -477,7 +478,7 @@ void Sexy::SylvesterFish::Init()
 	mIsGuppy = false;
 	mSize = SIZE_MEDIUM;
 	mYMin = 105;
-	mYMax = 360;
+	mYMax = 360 + MOD_EXTRA_HEIGHT;
 	mMouseVisible = gUnkBool06;
 	mCoinDropT = DetermineCoinDropT(mApp->mSeed->Next() % 250 + 200);
 }
@@ -494,10 +495,10 @@ void Sexy::SylvesterFish::GrowSylvester(int theNewSize)
 		mHeight = 80;
 		mXD += 40.0;
 		mYMin = 105;
-		mYMax = 360;
+		mYMax = 360 + MOD_EXTRA_HEIGHT;
 		mXMin = 10;
 		mYD += 40.0;
-		mXMax = 540;
+		mXMax = 540 + MOD_EXTRA_WIDTH;
 		if (mShadowPtr)
 			mShadowPtr->mShadowSize = 0;
 	}
@@ -506,11 +507,11 @@ void Sexy::SylvesterFish::GrowSylvester(int theNewSize)
 		mWidth = 160;
 		mHeight = 160;
 		mXD -= 40.0;
-		mYMax = 310;
+		mYMax = 310 + MOD_EXTRA_HEIGHT;
 		mYMin = 75;
 		mXMin = 0;
 		mYD -= 40.0;
-		mXMax = 480;
+		mXMax = 480 + MOD_EXTRA_WIDTH;
 		if (mShadowPtr)
 			mShadowPtr->mShadowSize = 2;
 	}

@@ -9,6 +9,7 @@
 #include "Alien.h"
 #include "Missle.h"
 #include "Res.h"
+#include "ModConfig.h"
 
 #include <time.h>
 
@@ -207,7 +208,7 @@ void Sexy::Breeder::Update()
 						{
 							if (mVY >= 4.0)
 							{
-								if (mYD > 240.0)
+								if (mYD > 240.0 + MOD_EXTRA_HEIGHT / 2)
 									mMovementState = 0;
 							}
 							else
@@ -220,7 +221,7 @@ void Sexy::Breeder::Update()
 							mVXAbs--;
 						}
 					}
-					if (mYD > 240.0)
+					if (mYD > 240.0 + MOD_EXTRA_HEIGHT / 2)
 						mMovementState = 0;
 				}
 				else if (mMovementState == 4)
@@ -243,7 +244,7 @@ void Sexy::Breeder::Update()
 						{
 							if (mVY >= 4.0)
 							{
-								if (mYD > 240.0)
+								if (mYD > 240.0 + MOD_EXTRA_HEIGHT / 2)
 									mMovementState = 0;
 							}
 							else
@@ -256,7 +257,7 @@ void Sexy::Breeder::Update()
 							mVXAbs--;
 						}
 					}
-					if (mYD > 240.0)
+					if (mYD > 240.0 + MOD_EXTRA_HEIGHT / 2)
 						mMovementState = 0;
 				}
 				else if (mMovementState > 4)
@@ -279,7 +280,7 @@ void Sexy::Breeder::Update()
 								mVX += 1.0;
 
 							mVXAbs = (int)abs(mVX);
-							if (mXD > 250.0)
+							if (mXD > 250.0 + MOD_EXTRA_WIDTH / 2)
 							{
 								mXDirection = -1;
 								mVX -= 2.0;
@@ -293,7 +294,7 @@ void Sexy::Breeder::Update()
 								mVX -= 1.0;
 
 							mVXAbs = (int)abs(mVX);
-							if (mXD < 175.0)
+							if (mXD < 175.0 + MOD_EXTRA_WIDTH / 2)
 							{
 								mXDirection = 1;
 								mVX += 2.0;
@@ -358,7 +359,7 @@ void Sexy::Breeder::Update()
 	if (mVX == 3.0)
 		mYD += 0.25 / mSpeedMod;
 
-	if (mYMax < 321)
+	if (mYMax < 321 + MOD_EXTRA_HEIGHT)
 		mYD -= 0.25;
 	if (mXD > (double)mXMax)
 		mXD = (double)mXMax;
@@ -472,7 +473,7 @@ void Sexy::Breeder::MouseDown(int x, int y, int theClickCount)
 	{
 		double absX = x + mXD;
 		double absY = y + mYD;
-		if (absX < 587.0 && absX > 30.0 && absY < 400.0 && absY > 60.0)
+		if (absX < 587.0 + MOD_EXTRA_WIDTH && absX > 30.0 && absY < 400.0 + MOD_EXTRA_HEIGHT && absY > 60.0)
 		{
 			bool unk = aBoard->Unk11(mX + x, mY + y);
 			if (!unk && aBoard->Buy(aBoard->m0x4ac, true))
@@ -658,6 +659,8 @@ void Sexy::Breeder::Sync(DataSync* theSync)
 	theSync->SyncLong(mXMin);
 	theSync->SyncLong(mYMin);
 	theSync->SyncLong(mXMax);
+	if (theSync->mReader != NULL)
+		ModMigrateBounds(mXMax, mYMin, mYMax);
 	theSync->SyncLong(mSize);
 	theSync->SyncLong(m0x1a4);
 	theSync->SyncLong(m0x1a8);
@@ -700,10 +703,10 @@ void Sexy::Breeder::Init(int theX, int theY)
 	}
 	mXDirection = 1;
 	m0x17c = 0;
-	mYMax = 370;
+	mYMax = 370 + MOD_EXTRA_HEIGHT;
 	mYMin = 95;
 	mXMin = 10;
-	mXMax = 540;
+	mXMax = 540 + MOD_EXTRA_WIDTH;
 	int aRand = mApp->mSeed->Next();
 	if (aRand % 3 == 0)
 		mSpeedMod = 2.0;

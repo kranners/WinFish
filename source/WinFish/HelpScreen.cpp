@@ -75,19 +75,19 @@ Sexy::HelpScreen::~HelpScreen()
 void Sexy::HelpScreen::AddedToManager(WidgetManager* theWidgetManager)
 {
 	Widget::AddedToManager(theWidgetManager);
-	theWidgetManager->AddWidget(mMenuButton);
-	theWidgetManager->AddWidget(mContinueButton);
-	theWidgetManager->AddWidget(mNextButton);
-	theWidgetManager->AddWidget(mPreviousButton);
+	AddWidget(mMenuButton);
+	AddWidget(mContinueButton);
+	AddWidget(mNextButton);
+	AddWidget(mPreviousButton);
 }
 
 void Sexy::HelpScreen::RemovedFromManager(WidgetManager* theWidgetManager)
 {
+	RemoveWidget(mMenuButton);
+	RemoveWidget(mContinueButton);
+	RemoveWidget(mNextButton);
+	RemoveWidget(mPreviousButton);
 	Widget::RemovedFromManager(theWidgetManager);
-	theWidgetManager->RemoveWidget(mMenuButton);
-	theWidgetManager->RemoveWidget(mContinueButton);
-	theWidgetManager->RemoveWidget(mNextButton);
-	theWidgetManager->RemoveWidget(mPreviousButton);
 }
 
 void Sexy::HelpScreen::Update()

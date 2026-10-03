@@ -91,8 +91,8 @@ Sexy::StoryScreen::StoryScreen(WinFishApp* theApp, int theStoryId)
 	mBubbleMgr->UpdateALot();
 	mX = 0;
 	mY = 0;
-	mWidth = mApp->mWidth;
-	mHeight = mApp->mHeight;
+	mWidth = 640;
+	mHeight = 480;
 
 	mBackToMainMenuButton = MakeHyperlinkWidget(0, this, "Back To Main Menu");
 	mBackToMainMenuButton->mX = 630 - mBackToMainMenuButton->mWidth;
@@ -149,17 +149,17 @@ Sexy::StoryScreen::~StoryScreen()
 void Sexy::StoryScreen::AddedToManager(WidgetManager* theWidgetManager)
 {
 	Widget::AddedToManager(theWidgetManager);
-	theWidgetManager->AddWidget(mBackToMainMenuButton);
-	theWidgetManager->AddWidget(mNextButton);
-	theWidgetManager->AddWidget(mBackButton);
+	AddWidget(mBackToMainMenuButton);
+	AddWidget(mNextButton);
+	AddWidget(mBackButton);
 }
 
 void Sexy::StoryScreen::RemovedFromManager(WidgetManager* theWidgetManager)
 {
+	RemoveWidget(mBackToMainMenuButton);
+	RemoveWidget(mNextButton);
+	RemoveWidget(mBackButton);
 	Widget::RemovedFromManager(theWidgetManager);
-	theWidgetManager->RemoveWidget(mBackToMainMenuButton);
-	theWidgetManager->RemoveWidget(mNextButton);
-	theWidgetManager->RemoveWidget(mBackButton);
 }
 
 void Sexy::StoryScreen::Update()

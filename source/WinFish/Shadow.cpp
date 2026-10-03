@@ -4,6 +4,7 @@
 #include "WinFishApp.h"
 #include "Board.h"
 #include "Res.h"
+#include "ModConfig.h"
 
 Sexy::Shadow::Shadow()
 {
@@ -21,11 +22,11 @@ Sexy::Shadow::Shadow(int theSize, GameObject* theObject)
 	else
 	{
 		theObject->mShadowPtr = this;
-		m0x160 = (theObject->mY - 50) / 2;
+		m0x160 = (theObject->mY - 50 - MOD_EXTRA_HEIGHT) / 2;
 	}
 	m0x168 = 1.0;
 	mX = -200;
-	mY = mApp->mSeed->Next() % 5 + 410;
+	mY = mApp->mSeed->Next() % 5 + 410 + MOD_EXTRA_HEIGHT;
 	mWidth = 80;
 	mHeight = 40;
 	mMouseVisible = false;
@@ -42,17 +43,17 @@ void Sexy::Shadow::Update()
 	if (mObjectPtr == nullptr)
 		return;
 
-	m0x160 = (mObjectPtr->mY - 50) / 2;
+	m0x160 = (mObjectPtr->mY - 50 - MOD_EXTRA_HEIGHT) / 2;
 	int aX = mObjectPtr->mX;
 	if (mShadowSize == 2)
 		aX += 40;
 	mX = aX;
 	if (mShadowSize == 0 || mShadowSize == 2)
 	{
-		int aY = 370 - mObjectPtr->mY;
+		int aY = 370 + MOD_EXTRA_HEIGHT - mObjectPtr->mY;
 		if (aY < 0)
 			aY = 0;
-		mY = 415 - (aY*30) / 370;
+		mY = 415 + MOD_EXTRA_HEIGHT - (aY*30) / (370 + MOD_EXTRA_HEIGHT);
 	}
 }
 

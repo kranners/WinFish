@@ -4,6 +4,7 @@
 #include "WinFishApp.h"
 #include "Board.h"
 #include "Res.h"
+#include "ModConfig.h"
 
 Sexy::Larva::Larva()
 {
@@ -34,7 +35,7 @@ void Sexy::Larva::Update()
 		return;
 
 	UpdateCounters();
-	if (!mMouseVisible && mYD < 320.0 && !m0x175)
+	if (!mMouseVisible && mYD < 320.0 + MOD_EXTRA_HEIGHT && !m0x175)
 	{
 		mMouseVisible = true;
 		mDoFinger = true;
@@ -47,15 +48,15 @@ void Sexy::Larva::Update()
 			Remove();
 			return;
 		}
-		if (mXD > 530.0)
-			mXD = 530.0;
+		if (mXD > 530.0 + MOD_EXTRA_WIDTH)
+			mXD = 530.0 + MOD_EXTRA_WIDTH;
 	}
 	else
 	{
-		if (mXD < 550.0)
-			mXD += (550.0 - mXD) / 7.0;
-		else if (mXD > 550.0)
-			mXD -= (mXD - 550.0) / 7.0;
+		if (mXD < 550.0 + MOD_HUD_X)
+			mXD += (550.0 + MOD_HUD_X - mXD) / 7.0;
+		else if (mXD > 550.0 + MOD_HUD_X)
+			mXD -= (mXD - (550.0 + MOD_HUD_X)) / 7.0;
 
 		if (mYD < 30.0)
 			mYD += (30.0 - mYD) / 7.0;

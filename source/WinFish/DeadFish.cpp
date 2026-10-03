@@ -5,6 +5,7 @@
 #include "Board.h"
 #include "Shadow.h"
 #include "Res.h"
+#include "ModConfig.h"
 
 using namespace Sexy;
 
@@ -123,9 +124,9 @@ void Sexy::DeadFish::Update()
 		return;
 	}
 
-	if ((mObjType == TYPE_ULTRA && mYD > 300.0) ||
-		((mObjType == TYPE_GRUBBER || mObjType == TYPE_PENTA) && mYD > 365.0) ||
-		(mYD > 370.0 || m0x1a0 > 105))
+	if ((mObjType == TYPE_ULTRA && mYD > 300.0 + MOD_EXTRA_HEIGHT) ||
+		((mObjType == TYPE_GRUBBER || mObjType == TYPE_PENTA) && mYD > 365.0 + MOD_EXTRA_HEIGHT) ||
+		(mYD > 370.0 + MOD_EXTRA_HEIGHT || m0x1a0 > 105))
 	{
 		m0x1a0--;
 	}
@@ -158,25 +159,25 @@ void Sexy::DeadFish::Update()
 
 	mXD += mVX / mSpeedMod;
 	mYD += mVY / mSpeedMod;
-	if (mXD > 540.0)
-		mXD = 540.0;
+	if (mXD > 540.0 + MOD_EXTRA_WIDTH)
+		mXD = 540.0 + MOD_EXTRA_WIDTH;
 	if (mXD < 10.0)
 		mXD = 10.0;
 
 	if (mObjType == TYPE_PENTA || mObjType == TYPE_GRUBBER)
 	{
-		if(mYD > 370.0)
-			mYD = 370.0;
+		if(mYD > 370.0 + MOD_EXTRA_HEIGHT)
+			mYD = 370.0 + MOD_EXTRA_HEIGHT;
 	}
 	else if (mObjType == TYPE_ULTRA)
 	{
-		if (mYD > 310.0)
-			mYD = 310.0;
+		if (mYD > 310.0 + MOD_EXTRA_HEIGHT)
+			mYD = 310.0 + MOD_EXTRA_HEIGHT;
 	}
 	else
 	{
-		if (mYD > 380.0)
-			mYD = 380.0;
+		if (mYD > 380.0 + MOD_EXTRA_HEIGHT)
+			mYD = 380.0 + MOD_EXTRA_HEIGHT;
 	}
 
 	if (mYD < 85.0)

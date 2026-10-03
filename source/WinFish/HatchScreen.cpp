@@ -22,15 +22,15 @@ Sexy::HatchScreen::HatchScreen(WinFishApp* theApp, int thePetId)
 	theApp->m0x884 = true;
 	mX = 0;
 	mY = 0;
-	mWidth = mApp->mWidth;
-	mHeight = mApp->mHeight;
+	mWidth = 640;
+	mHeight = 480;
 
 	mContinueButton = MakeDialogButton2(99, this, "Please Wait...", IMAGE_MAINBUTTON);
 	mContinueButton->SetFont(FONT_JUNGLEFEVER12OUTLINE);
 	mContinueButton->mMouseVisible = false;
 	mContinueButton->mColors[0] = Color(255, 240, 0, 255);
 	mContinueButton->Resize(186, 445, 264, mContinueButton->mHeight);
-	mApp->mWidgetManager->BringToFront(mContinueButton);
+	BringToFront(mContinueButton);
 
 	mMenuButton = MakeDialogButton2(100, this, "Menu", IMAGE_MAINBUTTON);
 	mMenuButton->Resize(525, 4, 80, mMenuButton->mHeight);
@@ -67,17 +67,17 @@ Sexy::HatchScreen::~HatchScreen()
 void Sexy::HatchScreen::AddedToManager(WidgetManager* theWidgetManager)
 {
 	Widget::AddedToManager(theWidgetManager);
-	theWidgetManager->AddWidget(mContinueButton);
-	theWidgetManager->AddWidget(mMenuButton);
-	theWidgetManager->AddWidget(mOverlay);
+	AddWidget(mContinueButton);
+	AddWidget(mMenuButton);
+	AddWidget(mOverlay);
 }
 
 void Sexy::HatchScreen::RemovedFromManager(WidgetManager* theWidgetManager)
 {
+	RemoveWidget(mContinueButton);
+	RemoveWidget(mMenuButton);
+	RemoveWidget(mOverlay);
 	Widget::RemovedFromManager(theWidgetManager);
-	theWidgetManager->RemoveWidget(mContinueButton);
-	theWidgetManager->RemoveWidget(mMenuButton);
-	theWidgetManager->RemoveWidget(mOverlay);
 }
 
 void Sexy::HatchScreen::Update()

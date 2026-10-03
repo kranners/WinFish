@@ -195,7 +195,8 @@ void Sexy::GameSelector::Update()
 		if (mApp->mCurrentProfile && mApp->mCurrentProfile->mBonusItemId > 5)
 		{
 			Rect aBonusArea(220, 340, 50, 50);
-			int aContains = aBonusArea.Contains(mWidgetManager->mLastMouseX, mWidgetManager->mLastMouseY);
+			Point anAbsPos = GetAbsPos(); // mLastMouseX/Y are root coordinates
+			int aContains = aBonusArea.Contains(mWidgetManager->mLastMouseX - anAbsPos.mX, mWidgetManager->mLastMouseY - anAbsPos.mY);
 			if (aContains && mApp->mDialogMap.size() == 0)
 				aHover = mApp->mCurrentProfile->m0x80 == 0 ? 5 : 6;
 		}
@@ -291,14 +292,14 @@ void Sexy::GameSelector::DrawOverlay(Graphics* g)
 void Sexy::GameSelector::AddedToManager(WidgetManager* theWidgetManager)
 {
 	Widget::AddedToManager(theWidgetManager);
-	theWidgetManager->AddWidget(mAdventureButton);
-	theWidgetManager->AddWidget(mVirtualTankButton);
-	theWidgetManager->AddWidget(mOptionsButton);
-	theWidgetManager->AddWidget(mQuitButton);
-	theWidgetManager->AddWidget(mChallengeButton);
-	theWidgetManager->AddWidget(mTimeTrialButton);
-	theWidgetManager->AddWidget(mHallOfFameButton);
-	theWidgetManager->AddWidget(mHelpButton);
+	AddWidget(mAdventureButton);
+	AddWidget(mVirtualTankButton);
+	AddWidget(mOptionsButton);
+	AddWidget(mQuitButton);
+	AddWidget(mChallengeButton);
+	AddWidget(mTimeTrialButton);
+	AddWidget(mHallOfFameButton);
+	AddWidget(mHelpButton);
 
 	if (!mNotYouButton)
 	{
@@ -315,39 +316,29 @@ void Sexy::GameSelector::AddedToManager(WidgetManager* theWidgetManager)
 		mNotYouButton->Resize(97, 90, aStrWdth, aStrHght);
 	}
 
-	theWidgetManager->AddWidget(mNotYouButton);
-	theWidgetManager->AddWidget(mGameSelectorOverlay);
+	AddWidget(mNotYouButton);
+	AddWidget(mGameSelectorOverlay);
 }
 
 void Sexy::GameSelector::RemovedFromManager(WidgetManager* theWidgetManager)
 {
-	Widget::RemovedFromManager(theWidgetManager);
-	theWidgetManager->RemoveWidget(mAdventureButton);
-	theWidgetManager->RemoveWidget(mVirtualTankButton);
-	theWidgetManager->RemoveWidget(mOptionsButton);
-	theWidgetManager->RemoveWidget(mQuitButton);
-	theWidgetManager->RemoveWidget(mChallengeButton);
-	theWidgetManager->RemoveWidget(mTimeTrialButton);
-	theWidgetManager->RemoveWidget(mHallOfFameButton);
-	theWidgetManager->RemoveWidget(mHelpButton);
+	RemoveWidget(mAdventureButton);
+	RemoveWidget(mVirtualTankButton);
+	RemoveWidget(mOptionsButton);
+	RemoveWidget(mQuitButton);
+	RemoveWidget(mChallengeButton);
+	RemoveWidget(mTimeTrialButton);
+	RemoveWidget(mHallOfFameButton);
+	RemoveWidget(mHelpButton);
 	if(mNotYouButton)
-		theWidgetManager->RemoveWidget(mNotYouButton);
-	theWidgetManager->RemoveWidget(mGameSelectorOverlay);
+		RemoveWidget(mNotYouButton);
+	RemoveWidget(mGameSelectorOverlay);
+	Widget::RemovedFromManager(theWidgetManager);
 }
 
 void Sexy::GameSelector::OrderInManagerChanged()
 {
-	mWidgetManager->PutInfront(mGameSelectorOverlay, this);
-	if(mNotYouButton)
-		mWidgetManager->PutInfront(mNotYouButton, this);
-	mWidgetManager->PutInfront(mHelpButton, this);
-	mWidgetManager->PutInfront(mHallOfFameButton, this);
-	mWidgetManager->PutInfront(mTimeTrialButton, this);
-	mWidgetManager->PutInfront(mChallengeButton, this);
-	mWidgetManager->PutInfront(mQuitButton, this);
-	mWidgetManager->PutInfront(mOptionsButton, this);
-	mWidgetManager->PutInfront(mVirtualTankButton, this);
-	mWidgetManager->PutInfront(mAdventureButton, this);
+	Widget::OrderInManagerChanged();
 }
 
 void Sexy::GameSelector::KeyChar(SexyChar theChar)

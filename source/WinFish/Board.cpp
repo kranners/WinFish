@@ -25,6 +25,7 @@
 #include "BubbleMgr.h"
 #include "MessageWidget.h"
 #include "Res.h"
+#include "ModConfig.h"
 
 #include "Fish.h"
 #include "Oscar.h"
@@ -81,7 +82,7 @@ Board::Board(WinFishApp* theApp)
 	m0x2a7 = false;
 	mStarField = new StarField();
 	if ((mApp->mCurrentProfile->mCheatCodeFlags >> 3 & 1) != 0)
-		mStarField->Init(1000);
+		mStarField->Init(1000 * MOD_SCREEN_WIDTH * MOD_SCREEN_HEIGHT / (640 * 480));
 
 	mCheatCodes[CC_WAVY] = new CheatCode("wavy");
 	mCheatCodes[CC_PREGO] = new CheatCode("prego");
@@ -130,7 +131,7 @@ Board::Board(WinFishApp* theApp)
 	mBoardOverlay2 = new BoardOverlay(this, 1);
 
 	mBubbleMgr = new BubbleMgr();
-	mBubbleMgr->mBubbleBounds = Rect(0, 82, 640, 398);
+	mBubbleMgr->mBubbleBounds = Rect(0, 82, 640 + MOD_EXTRA_WIDTH, 398 + MOD_EXTRA_HEIGHT);
 	mBubbleMgr->SetBubbleConfig(0, 0);
 	gZombieMode = mApp->mCurrentProfile->mCheatCodeFlags >> 4 & 1;
 	mCyraxPtr = nullptr;
@@ -184,12 +185,12 @@ Board::Board(WinFishApp* theApp)
 	mMenuButton->mButtonImage = IMAGE_BLANK;
 	mMenuButton->mOverImage = IMAGE_OPTIONSBUTTON;
 	mMenuButton->mDownImage = IMAGE_OPTIONSBUTTOND;
-	mMenuButton->Resize(525, 3, 101, 29);
+	mMenuButton->Resize(525 + MOD_HUD_X, 3, 101, 29);
 
 	mMoneyLabel = new MyLabelWidget();
 	mMoneyLabel->mMouseVisible = false;
 	mMoneyLabel->mAlignment = 2;
-	mMoneyLabel->mX = 535;
+	mMoneyLabel->mX = 535 + MOD_HUD_X;
 	mMoneyLabel->mY = 40;
 	mMoneyLabel->mLabelFont = FONT_CONTINUUMBOLD12;
 	mMoneyLabel->mHeight = mMoneyLabel->mLabelFont->GetHeight();
@@ -463,7 +464,7 @@ void Sexy::Board::SpawnDeadAlien(int theX, int theY, int theAnimationIndex, int 
 void Sexy::Board::SpawnGameObject(GameObject* theObject, bool randomPosition)
 {
 	if (randomPosition)
-		theObject->SetPosition(mApp->mSeed->Next() % 520 + 20, mApp->mSeed->Next() % 265 + 105);
+		theObject->SetPosition(mApp->mSeed->Next() % (520 + MOD_EXTRA_WIDTH) + 20, mApp->mSeed->Next() % (265 + MOD_EXTRA_HEIGHT) + 105);
 	AddGameObject(theObject);
 	mWidgetManager->AddWidget(theObject);
 	MakeShadowForGameObject(theObject);
@@ -515,7 +516,7 @@ GameObject* Sexy::Board::SpawnGuppyAsFood()
 GameObject* Sexy::Board::SpawnStarAsFood()
 {
 	PlaySample(SOUND_GROW_ID, 3, 1.0);
-	Coin* aCoin = new Coin(mApp->mSeed->Next() % 520 + 20, Rand() % 50 + 105, 3, nullptr, -1.0);
+	Coin* aCoin = new Coin(mApp->mSeed->Next() % (520 + MOD_EXTRA_WIDTH) + 20, Rand() % 50 + 105, 3, nullptr, -1.0);
 	aCoin->mMouseVisible = false;
 	AddGameObject(aCoin);
 	mWidgetManager->AddWidget(aCoin);
@@ -526,7 +527,7 @@ GameObject* Sexy::Board::SpawnStarAsFood()
 GameObject* Sexy::Board::SpawnLarvaAsFood()
 {
 	PlaySample(SOUND_GROW_ID, 3, 1.0);
-	Larva* aLarva = new Larva(mApp->mSeed->Next() % 520 + 20,360 - Rand() % 50);
+	Larva* aLarva = new Larva(mApp->mSeed->Next() % (520 + MOD_EXTRA_WIDTH) + 20,360 + MOD_EXTRA_HEIGHT - Rand() % 50);
 	aLarva->m0x175 = true;
 	AddGameObject(aLarva);
 	mWidgetManager->AddWidget(aLarva);
@@ -551,7 +552,7 @@ GameObject* Sexy::Board::SpawnUltraAsFood()
 GameObject* Sexy::Board::SpawnExoticFood(int theType)
 {
 	PlaySample(SOUND_GROW_ID, 3, 1.0);
-	Food* aFood = new Food(mApp->mSeed->Next() % 450 + 50, 115, 0, 0, theType);
+	Food* aFood = new Food(mApp->mSeed->Next() % (450 + MOD_EXTRA_WIDTH) + 50, 115, 0, 0, theType);
 	AddGameObject(aFood);
 	mWidgetManager->AddWidget(aFood);
 	SortGameObjects();
@@ -809,7 +810,7 @@ void Board::Update()
 		if (!isLeftBtnDown)
 			m0x4ec = false;
 		else if ((mGameUpdateCnt % (16 - gFoodLimit) == 0) && (m0x3c0 + 200 < aVal) && 
-			(aLastMouseX >= 31 && aLastMouseX <= 586) && (aLastMouseY >= 61 && aLastMouseY <= 399) && Buy(m0x4ac, false))
+			(aLastMouseX >= 31 && aLastMouseX <= 586 + MOD_EXTRA_WIDTH) && (aLastMouseY >= 61 && aLastMouseY <= 399 + MOD_EXTRA_HEIGHT) && Buy(m0x4ac, false))
 		{ // 301
 			DropFood(aLastMouseX - 10, aLastMouseY - 10, 0, false, 20, -1);
 		}
@@ -999,10 +1000,10 @@ void Board::Update()
 					DetermineAlienSpawnCoordsVT();
 				else
 				{
-					mCrosshair1X = mApp->mSeed->Next() % 450 + 20;
-					mCrosshair1Y = mApp->mSeed->Next() % 195 + 105;
-					mCrosshair2X = mApp->mSeed->Next() % 450 + 20;
-					mCrosshair2Y = mApp->mSeed->Next() % 195 + 105;
+					mCrosshair1X = mApp->mSeed->Next() % (450 + MOD_EXTRA_WIDTH) + 20;
+					mCrosshair1Y = mApp->mSeed->Next() % (195 + MOD_EXTRA_HEIGHT) + 105;
+					mCrosshair2X = mApp->mSeed->Next() % (450 + MOD_EXTRA_WIDTH) + 20;
+					mCrosshair2Y = mApp->mSeed->Next() % (195 + MOD_EXTRA_HEIGHT) + 105;
 				}
 			}
 			else if (mAlienTimer < 1)
@@ -1027,10 +1028,10 @@ void Board::Update()
 
 					for (int i = 0; i < aVal; i++)
 					{
-						mCrosshair1X = mApp->mSeed->Next() % 450 + 20;
-						mCrosshair1Y = mApp->mSeed->Next() % 195 + 105;
-						mCrosshair2X = mApp->mSeed->Next() % 450 + 20;
-						mCrosshair2Y = mApp->mSeed->Next() % 195 + 105;
+						mCrosshair1X = mApp->mSeed->Next() % (450 + MOD_EXTRA_WIDTH) + 20;
+						mCrosshair1Y = mApp->mSeed->Next() % (195 + MOD_EXTRA_HEIGHT) + 105;
+						mCrosshair2X = mApp->mSeed->Next() % (450 + MOD_EXTRA_WIDTH) + 20;
+						mCrosshair2Y = mApp->mSeed->Next() % (195 + MOD_EXTRA_HEIGHT) + 105;
 						SpawnAlien(mAlienExpect, mCrosshair1X, mCrosshair1Y, false);
 					}
 				}
@@ -1171,13 +1172,15 @@ void Board::Draw(Graphics* g)
 	DrawTankBackground(g);
 
 	if (mApp->mGameMode != GAMEMODE_VIRTUAL_TANK)
-		g->DrawImage(IMAGE_MENUBAR, 0, 0);
+		g->DrawImage(IMAGE_MENUBAR, MOD_HUD_X, 0);
 	else if(!mApp->IsScreenSaver())
-		g->DrawImage(IMAGE_TROPHYBAR, 0, 0);
+		g->DrawImage(IMAGE_TROPHYBAR, MOD_HUD_X, 0);
 
 	if (m0x450 > 0 && m0x450 % 20 < 10)
-		g->DrawImage(IMAGE_MONEYFLASH, 545, 39);
+		g->DrawImage(IMAGE_MONEYFLASH, 545 + MOD_HUD_X, 39);
 
+	// The help hints below point at HUD buttons, so they move with the centered menubar.
+	g->Translate(MOD_HUD_X, 0);
 	g->SetFont(FONT_JUNGLEFEVER10OUTLINE);
 	g->SetColor(Color(0x6e, 0xfa, 0x6e));
 	if (mMessageShown[2] && mLevel == 1 && mTank == 1 && !mApp->mCurrentProfile->mFinishedGame) // 52
@@ -1216,6 +1219,7 @@ void Board::Draw(Graphics* g)
 			g->DrawString("buy egg piece!", 480, 107);
 		}
 	} // 132
+	g->Translate(-MOD_HUD_X, 0);
 
 	if (mApp->mGameMode == GAMEMODE_VIRTUAL_TANK)
 		return;
@@ -1235,19 +1239,19 @@ void Board::Draw(Graphics* g)
 	if (!mApp->mRelaxMode)
 	{
 		if (mApp->mGameMode == GAMEMODE_CHALLENGE)
-			g->DrawString("Challenge", 15, 470);
+			g->DrawString("Challenge", 15, 470 + MOD_EXTRA_HEIGHT);
 		else if(mApp->mGameMode == GAMEMODE_TIME_TRIAL)
-			g->DrawString("Time Trial", 15, 470);
+			g->DrawString("Time Trial", 15, 470 + MOD_EXTRA_HEIGHT);
 		else if(mApp->mGameMode == GAMEMODE_SANDBOX)
-			g->DrawString("Sandbox", 15, 470);
+			g->DrawString("Sandbox", 15, 470 + MOD_EXTRA_HEIGHT);
 		else if(!mIsBonusRound || mApp->mCurrentProfile->mFinishedGame && mTank != 5)
-			g->DrawString(StrFormat("Tank %d-%d", mTank, mLevel), 15, 470);
+			g->DrawString(StrFormat("Tank %d-%d", mTank, mLevel), 15, 470 + MOD_EXTRA_HEIGHT);
 		else if(mTank != 5)
-			g->DrawString("Bonus Round", 15, 470);
+			g->DrawString("Bonus Round", 15, 470 + MOD_EXTRA_HEIGHT);
 	}
 	else
 	{
-		g->DrawString("Relax", 15, 470);
+		g->DrawString("Relax", 15, 470 + MOD_EXTRA_HEIGHT);
 	}
 
 	if (mApp->mGameMode == GAMEMODE_TIME_TRIAL)
@@ -1257,9 +1261,9 @@ void Board::Draw(Graphics* g)
 		int aSecs = aTime % 60;
 		if (aMins < 0) aMins = 0; if (aSecs < 0) aSecs = 0;
 		if (mGameUpdateCnt < 347)
-			g->DrawString(StrFormat("%d:%02d", aMins, aSecs), g->GetFont()->StringWidth("Time Remaining: ") + 465, 470);
+			g->DrawString(StrFormat("%d:%02d", aMins, aSecs), g->GetFont()->StringWidth("Time Remaining: ") + 465 + MOD_EXTRA_WIDTH, 470 + MOD_EXTRA_HEIGHT);
 		else
-			g->DrawString(StrFormat("Time Remaining: %d:%02d", aMins, aSecs), 465, 470);
+			g->DrawString(StrFormat("Time Remaining: %d:%02d", aMins, aSecs), 465 + MOD_EXTRA_WIDTH, 470 + MOD_EXTRA_HEIGHT);
 
 		if (mIsBonusRound)
 			DrawBonusRound(g);
@@ -1272,7 +1276,7 @@ void Board::Draw(Graphics* g)
 			{
 				if (mApp->mGameMode != GAMEMODE_VIRTUAL_TANK)
 				{
-					g->DrawString(StrFormat("Time: %d:%02d", (Unk01() - m0x3b8) / 60000, (Unk01() - m0x3b8) / 1000 % 60), 540, 470);
+					g->DrawString(StrFormat("Time: %d:%02d", (Unk01() - m0x3b8) / 60000, (Unk01() - m0x3b8) / 1000 % 60), 540 + MOD_EXTRA_WIDTH, 470 + MOD_EXTRA_HEIGHT);
 				}
 			}
 		}
@@ -1283,11 +1287,11 @@ void Board::Draw(Graphics* g)
 	if (mAlienTimer < 1 || mAlienTimer > 225 || mPetsInTank[13] == 0 || mTank == 5 || mApp->mGameMode == GAMEMODE_VIRTUAL_TANK)
 		return;
 	g->SetDrawMode(Graphics::DRAWMODE_ADDITIVE);
-	mCrosshair1Y = 280;
+	mCrosshair1Y = 280 + MOD_EXTRA_HEIGHT;
 	g->DrawImageCel(IMAGE_CROSSHAIR, mCrosshair1X + 40, mCrosshair1Y + 40, (mGameUpdateCnt / 4) % 5);
 	if (mAlienExpect == 9 || mAlienExpect == 10 || mAlienExpect == 11 || mAlienExpect == 12)
 	{
-		if (mAlienExpect == 11)mCrosshair2Y = 280;
+		if (mAlienExpect == 11)mCrosshair2Y = 280 + MOD_EXTRA_HEIGHT;
 		g->DrawImageCel(IMAGE_CROSSHAIR, mCrosshair2X + 40, mCrosshair2Y + 40, (mGameUpdateCnt / 4 + 2) % 5);
 	}
 	g->SetDrawMode(Graphics::DRAWMODE_NORMAL);
@@ -1533,7 +1537,7 @@ void Board::MouseDown(int x, int y, int theClickCount)
 		{
 			if (mAlienList->at(0)->mAlienType == ALIEN_GUS && mCyraxPtr == nullptr)
 			{
-				if (x >= 31 && x <= 586 && y >= 61 && y <= 379)
+				if (x >= 31 && x <= 586 + MOD_EXTRA_WIDTH && y >= 61 && y <= 379 + MOD_EXTRA_HEIGHT)
 				{
 					int aEatDelay = 0;
 					if (mAlienList->at(0)->FoodDroppedAtAlien(x, y))
@@ -1584,7 +1588,7 @@ void Board::MouseDown(int x, int y, int theClickCount)
 		}
 		else
 		{
-			if (x > 30 && x < 587 && y > 60 && y < 400 && 
+			if (x > 30 && x < 587 + MOD_EXTRA_WIDTH && y > 60 && y < 400 + MOD_EXTRA_HEIGHT &&
 				mDropFoodDelay <= 0 && (mTank != 5 || mApp->mGameMode == GAMEMODE_VIRTUAL_TANK) &&
 				mBilaterusList->empty() && mCyraxPtr == nullptr && mMissleList1->empty())
 			{
@@ -1702,7 +1706,7 @@ void Board::SpawnBubble(int theX, int theY)
 void Sexy::Board::SpawnRandomBubble()
 {
 	if (mBubbleMgr->mBubbleList.size() < 50) 
-		mBubbleMgr->SpawnBubble(mApp->mSeed->Next() % 22 + 150, mApp->mSeed->Next() % 6 + 400);
+		mBubbleMgr->SpawnBubble(mApp->mSeed->Next() % 22 + MOD_BG_X(150), mApp->mSeed->Next() % 6 + MOD_BG_Y(400));
 }
 
 void Board::AddGameObject(GameObject* theObject)
@@ -2193,7 +2197,7 @@ void Sexy::Board::StartGame()
 	{
 		if (mTank == 4)
 		{
-			SpawnBreeder(mApp->mSeed->Next() % 520 + 20, mApp->mSeed->Next() % 265 + 105);
+			SpawnBreeder(mApp->mSeed->Next() % (520 + MOD_EXTRA_WIDTH) + 20, mApp->mSeed->Next() % (265 + MOD_EXTRA_HEIGHT) + 105);
 			if (!mBreederList->empty())
 				mBreederList->at(0)->m0x1a4 = 2;
 		}
@@ -2208,7 +2212,7 @@ void Sexy::Board::StartGame()
 		else
 		{
 			for (int i = 0; i < 2; i++)
-				SpawnGuppy(mApp->mSeed->Next() % 520 + 20, mApp->mSeed->Next() % 265 + 105);
+				SpawnGuppy(mApp->mSeed->Next() % (520 + MOD_EXTRA_WIDTH) + 20, mApp->mSeed->Next() % (265 + MOD_EXTRA_HEIGHT) + 105);
 
 			mFishList->at(0)->mFoodAte = 2;
 			mFishList->at(1)->mFoodAte = 2;
@@ -2223,7 +2227,7 @@ void Sexy::Board::StartGame()
 	else
 	{
 		for (int i = 0; i < 2; i++)
-			SpawnGuppy(mApp->mSeed->Next() % 520 + 20, mApp->mSeed->Next() % 265 + 105);
+			SpawnGuppy(mApp->mSeed->Next() % (520 + MOD_EXTRA_WIDTH) + 20, mApp->mSeed->Next() % (265 + MOD_EXTRA_HEIGHT) + 105);
 	}
 
 	if (mApp->mGameMode == GAMEMODE_TIME_TRIAL)
@@ -2905,9 +2909,9 @@ void Sexy::Board::Unk06(Graphics* g, Image* theImage, int theX, int theY, float 
 {
 	int aStartY = -81 - theY;
 	int aCounter = 0;
-	for (int i = 0; i < 180; i += 9)
+	for (int i = 0; i < theImage->mHeight / 24 * 9; i += 9)
 	{
-		if (aStartY + theY < 359)
+		if (aStartY + theY < theImage->mHeight - 121)
 		{
 			bool isAccel = mApp->Is3DAccelerated();
 			double aRad = (((mGameUpdateCnt + i) * 5) * PI) / 180.0;
@@ -3189,8 +3193,8 @@ void Sexy::Board::DetermineAlienSpawnCoordsVT()
 	if (mAlienExpect == 8)
 		mCrosshair1X = aX + 1;
 
-	mCrosshair2X = mApp->mSeed->Next() % 450 + 20;
-	mCrosshair2Y = mApp->mSeed->Next() % 195 + 105;
+	mCrosshair2X = mApp->mSeed->Next() % (450 + MOD_EXTRA_WIDTH) + 20;
+	mCrosshair2Y = mApp->mSeed->Next() % (195 + MOD_EXTRA_HEIGHT) + 105;
 }
 
 int Sexy::Board::GetNextVirtualTankId()
@@ -3432,7 +3436,7 @@ void Sexy::Board::BonusRoundDropShell()
 		default: aCoinType = 1; break;
 		}
 
-		int aX = (mApp->mSeed->Next() % 520) + 20;
+		int aX = (mApp->mSeed->Next() % (520 + MOD_EXTRA_WIDTH)) + 20;
 		int aY = mApp->mSeed->Next() % 10 + 50;
 
 		double aVY = (double)(Rand() % 10) / 10.0 * 3.0 + 1.0;
@@ -4266,7 +4270,7 @@ void Sexy::Board::MakeVirtualTankButtons()
 	if (mMessageWidget)
 	{
 		mMessageWidget->mX = 20;
-		mMessageWidget->mWidth = 600;
+		mMessageWidget->mWidth = 600 + MOD_EXTRA_WIDTH;
 		if (mApp->IsScreenSaver())
 			mMessageWidget->mY = 60;
 	}
@@ -4275,7 +4279,7 @@ void Sexy::Board::MakeVirtualTankButtons()
 	mMenuButtons[SLOT_GRUBBER]->mButtonImage = IMAGE_MENUBTNU;
 	mMenuButtons[SLOT_GRUBBER]->mOverImage = IMAGE_MENUBTNO;
 	mMenuButtons[SLOT_GRUBBER]->mDownImage = IMAGE_MENUBTND2;
-	mMenuButtons[SLOT_GRUBBER]->Resize(70, 2, 58, 60);
+	mMenuButtons[SLOT_GRUBBER]->Resize(70 + MOD_HUD_X, 2, 58, 60);
 	mWidgetManager->AddWidget(mMenuButtons[SLOT_GRUBBER]);
 
 	mMenuButtons[SLOT_GRUBBER]->mPriceText = "STORE";
@@ -4285,7 +4289,7 @@ void Sexy::Board::MakeVirtualTankButtons()
 	mMenuButtons[SLOT_GEKKO]->mButtonImage = IMAGE_MENUBTNU;
 	mMenuButtons[SLOT_GEKKO]->mOverImage = IMAGE_MENUBTNO;
 	mMenuButtons[SLOT_GEKKO]->mDownImage = IMAGE_MENUBTND2;
-	mMenuButtons[SLOT_GEKKO]->Resize(144, 2, 58, 60);
+	mMenuButtons[SLOT_GEKKO]->Resize(144 + MOD_HUD_X, 2, 58, 60);
 	mWidgetManager->AddWidget(mMenuButtons[SLOT_GEKKO]);
 	mMenuButtons[SLOT_GEKKO]->mPriceText = "FISH";
 	mMenuButtons[SLOT_GEKKO]->Configure(IMAGE_TROPHYBUTTONS, 5, 1, 0, 3);
@@ -4294,7 +4298,7 @@ void Sexy::Board::MakeVirtualTankButtons()
 	mMenuButtons[SLOT_ULTRA]->mButtonImage = IMAGE_MENUBTNU;
 	mMenuButtons[SLOT_ULTRA]->mOverImage = IMAGE_MENUBTNO;
 	mMenuButtons[SLOT_ULTRA]->mDownImage = IMAGE_MENUBTND2;
-	mMenuButtons[SLOT_ULTRA]->Resize(216, 2, 58, 60);
+	mMenuButtons[SLOT_ULTRA]->Resize(216 + MOD_HUD_X, 2, 58, 60);
 	mWidgetManager->AddWidget(mMenuButtons[SLOT_ULTRA]);
 	mMenuButtons[SLOT_ULTRA]->mPriceText = "PETS";
 	mMenuButtons[SLOT_ULTRA]->Configure(IMAGE_TROPHYBUTTONS, 5, 1, 0, 4);
@@ -4303,7 +4307,7 @@ void Sexy::Board::MakeVirtualTankButtons()
 	mMenuButtons[SLOT_WEAPON]->mButtonImage = IMAGE_MENUBTNU;
 	mMenuButtons[SLOT_WEAPON]->mOverImage = IMAGE_MENUBTNO;
 	mMenuButtons[SLOT_WEAPON]->mDownImage = IMAGE_MENUBTND2;
-	mMenuButtons[SLOT_WEAPON]->Resize(364, 2, 58, 60);
+	mMenuButtons[SLOT_WEAPON]->Resize(364 + MOD_HUD_X, 2, 58, 60);
 	mWidgetManager->AddWidget(mMenuButtons[SLOT_WEAPON]);
 	mMenuButtons[SLOT_WEAPON]->mPriceText = "TANK";
 	mMenuButtons[SLOT_WEAPON]->Configure(IMAGE_TROPHYBUTTONS, 5, 1, 0, 5);
@@ -4312,7 +4316,7 @@ void Sexy::Board::MakeVirtualTankButtons()
 	mMenuButtons[SLOT_EGG]->mButtonImage = IMAGE_MENUBTNU;
 	mMenuButtons[SLOT_EGG]->mOverImage = IMAGE_MENUBTNO;
 	mMenuButtons[SLOT_EGG]->mDownImage = IMAGE_MENUBTND2;
-	mMenuButtons[SLOT_EGG]->Resize(290, 2, 58, 60);
+	mMenuButtons[SLOT_EGG]->Resize(290 + MOD_HUD_X, 2, 58, 60);
 	mWidgetManager->AddWidget(mMenuButtons[SLOT_EGG]);
 	mMenuButtons[SLOT_EGG]->mPriceText = "FEED";
 	mMenuButtons[SLOT_EGG]->Configure(IMAGE_TROPHYBUTTONS, 5, 1, 0, 1);
@@ -4321,7 +4325,7 @@ void Sexy::Board::MakeVirtualTankButtons()
 	mBackButton->mButtonImage = IMAGE_MENUBTNU;
 	mBackButton->mOverImage = IMAGE_MENUBTNO;
 	mBackButton->mDownImage = IMAGE_MENUBTND2;
-	mBackButton->Resize(438, 2, 58, 60);
+	mBackButton->Resize(438 + MOD_HUD_X, 2, 58, 60);
 	mWidgetManager->AddWidget(mBackButton);
 	mBackButton->mPriceText = "BACK";
 	mBackButton->Configure(IMAGE_TROPHYBUTTONS, 5, 1, 0, 0);
@@ -4460,7 +4464,7 @@ bool Sexy::Board::DoCheatCode(int theCheatCode)
 		Unk03();
 		ShowText(aStatus ? "Space Mode Enabled" : "Space Mode Disabled", false, -1);
 		if (aStatus)
-			mStarField->Init(1000);
+			mStarField->Init(1000 * MOD_SCREEN_WIDTH * MOD_SCREEN_HEIGHT / (640 * 480));
 	}
 	else if (theCheatCode == CC_ZOMBIE)
 	{
@@ -4579,7 +4583,7 @@ MenuButtonWidget* Sexy::Board::MakeAndUnlockMenuButton(int theBtnId, bool flag)
 		mMenuButtons[aBtnSlot]->mButtonImage = IMAGE_MENUBTNU;
 		mMenuButtons[aBtnSlot]->mDownImage = IMAGE_MENUBTND2;
 		mMenuButtons[aBtnSlot]->mOverImage = IMAGE_MENUBTNO;
-		mMenuButtons[aBtnSlot]->Resize(aBtnXCoords[aBtnSlot], 3, 58, 60);
+		mMenuButtons[aBtnSlot]->Resize(aBtnXCoords[aBtnSlot] + MOD_HUD_X, 3, 58, 60);
 		MenuButtonSetupNoVT(theBtnId, flag);
 		mSlotUnlocked[theBtnId] = true;
 		m0x2e0++;
@@ -4773,29 +4777,33 @@ void Sexy::Board::GetBubbleSpawnCoords(int& theX, int& theY)
 	case 1:
 		theX = 470;
 		theY = 300;
-		return;
+		break;
 	case 2:
 	case 3:
 		theX = 550;
 		theY = 315;
-		return;
+		break;
 	case 4:
 		theX = 10;
 		theY = 325;
-		return;
+		break;
 	case 5:
 		theX = 540;
 		theY = 315;
-		return;
+		break;
 	case 6:
 		theX = 360;
 		theY = 315;
-		return;
+		break;
 	default:
 		theX = 480;
 		theY = 300;
-		return;
+		break;
 	}
+
+	// These spots are on the background art, which is scaled up for the HD tank.
+	theX = MOD_BG_SPRITE_X(theX, 71);
+	theY = MOD_BG_SPRITE_Y(theY, 92);
 }
 
 void Sexy::Board::GetAlienAttractorSpawnCoords(int& theX, int& theY)
@@ -4805,32 +4813,35 @@ void Sexy::Board::GetAlienAttractorSpawnCoords(int& theX, int& theY)
 	case 1:
 		theX = 267;
 		theY = 320;
-		return;
+		break;
 	case 2:
 		theX = 255;
 		theY = 310;
-		return;
+		break;
 	case 3:
 		theX = 260;
 		theY = 310;
-		return;
+		break;
 	case 4:
 		theX = 270;
 		theY = 345;
-		return;
+		break;
 	case 5:
 		theX = 292;
 		theY = 320;
-		return;
+		break;
 	case 6:
 		theX = 210;
 		theY = 352;
-		return;
+		break;
 	default:
 		theX = 480;
 		theY = 300;
-		return;
+		break;
 	}
+
+	theX = MOD_BG_SPRITE_X(theX, 84);
+	theY = MOD_BG_SPRITE_Y(theY, 70);
 }
 
 void Sexy::Board::UpdateMoneyLabelText()
@@ -5220,7 +5231,7 @@ Fish* Sexy::Board::SpawnGuppy(int theX, int theY)
 
 GameObject* Sexy::Board::SpawnGuppyBought()
 {
-	Fish* aFish = new Fish(mApp->mSeed->Next() % 520 + 20, mApp->mSeed->Next() % 265 + 105);
+	Fish* aFish = new Fish(mApp->mSeed->Next() % (520 + MOD_EXTRA_WIDTH) + 20, mApp->mSeed->Next() % (265 + MOD_EXTRA_HEIGHT) + 105);
 	aFish->mVY = mApp->mSeed->Next() % 5 + 18;
 	aFish->mYD = 30;
 	aFish->mY = 30;
@@ -5236,7 +5247,7 @@ GameObject* Sexy::Board::SpawnGuppyBought()
 
 GameObject* Sexy::Board::SpawnStarGuppyBought()
 {
-	Fish* aFish = new Fish(mApp->mSeed->Next() % 520 + 20, mApp->mSeed->Next() % 265 + 105);
+	Fish* aFish = new Fish(mApp->mSeed->Next() % (520 + MOD_EXTRA_WIDTH) + 20, mApp->mSeed->Next() % (265 + MOD_EXTRA_HEIGHT) + 105);
 	aFish->mVY = mApp->mSeed->Next() % 5 + 18;
 	aFish->mYD = 30;
 	aFish->mY = 30;
@@ -5263,7 +5274,7 @@ GameObject* Sexy::Board::SpawnBreeder(int theX, int theY)
 
 GameObject* Sexy::Board::SpawnBreederBought()
 {
-	Breeder* aBreeder = new Breeder(mApp->mSeed->Next() % 520 + 20, mApp->mSeed->Next() % 265 + 105);
+	Breeder* aBreeder = new Breeder(mApp->mSeed->Next() % (520 + MOD_EXTRA_WIDTH) + 20, mApp->mSeed->Next() % (265 + MOD_EXTRA_HEIGHT) + 105);
 	aBreeder->mVY = mApp->mSeed->Next() % 5 + 18;
 	aBreeder->mYD = 30;
 	aBreeder->mY = 30;
@@ -5277,7 +5288,7 @@ GameObject* Sexy::Board::SpawnBreederBought()
 
 GameObject* Sexy::Board::SpawnOscarBought()
 {
-	Oscar* anOscar = new Oscar(mApp->mSeed->Next() % 520 + 20, mApp->mSeed->Next() % 265 + 105);
+	Oscar* anOscar = new Oscar(mApp->mSeed->Next() % (520 + MOD_EXTRA_WIDTH) + 20, mApp->mSeed->Next() % (265 + MOD_EXTRA_HEIGHT) + 105);
 	anOscar->mVY = mApp->mSeed->Next() % 5 + 23;
 	anOscar->mYD = 40;
 	anOscar->mY = 40;
@@ -5293,7 +5304,7 @@ GameObject* Sexy::Board::SpawnOscarBought()
 
 GameObject* Sexy::Board::SpawnUltraBought()
 {
-	Ultra* anUltra = new Ultra(mApp->mSeed->Next() % 520 + 20, mApp->mSeed->Next() % 265 + 105);
+	Ultra* anUltra = new Ultra(mApp->mSeed->Next() % (520 + MOD_EXTRA_WIDTH) + 20, mApp->mSeed->Next() % (265 + MOD_EXTRA_HEIGHT) + 105);
 	anUltra->mVY = mApp->mSeed->Next() % 5 + 25;
 	anUltra->mYD = 40;
 	anUltra->mY = 40;
@@ -5309,7 +5320,7 @@ GameObject* Sexy::Board::SpawnUltraBought()
 
 GameObject* Sexy::Board::SpawnGekkoBought()
 {
-	Gekko* aGekko = new Gekko(mApp->mSeed->Next() % 520 + 20, mApp->mSeed->Next() % 265 + 105);
+	Gekko* aGekko = new Gekko(mApp->mSeed->Next() % (520 + MOD_EXTRA_WIDTH) + 20, mApp->mSeed->Next() % (265 + MOD_EXTRA_HEIGHT) + 105);
 	aGekko->mVY = mApp->mSeed->Next() % 5 + 23;
 	aGekko->mYD = 40;
 	aGekko->mY = 40;
@@ -5323,7 +5334,7 @@ GameObject* Sexy::Board::SpawnGekkoBought()
 
 GameObject* Sexy::Board::SpawnPentaBought()
 {
-	Penta* aPenta = new Penta(mApp->mSeed->Next() % 520 + 20);
+	Penta* aPenta = new Penta(mApp->mSeed->Next() % (520 + MOD_EXTRA_WIDTH) + 20);
 	aPenta->mYD = 65;
 	aPenta->mY = 65;
 	AddGameObject(aPenta);
@@ -5337,7 +5348,7 @@ GameObject* Sexy::Board::SpawnPentaBought()
 
 GameObject* Sexy::Board::SpawnGrubberBought()
 {
-	Grubber* aGrubber = new Grubber(mApp->mSeed->Next() % 520 + 20);
+	Grubber* aGrubber = new Grubber(mApp->mSeed->Next() % (520 + MOD_EXTRA_WIDTH) + 20);
 	aGrubber->mYD = 65;
 	aGrubber->mY = 65;
 	AddGameObject(aGrubber);
@@ -5353,8 +5364,8 @@ GameObject* Sexy::Board::SpawnPet(int thePetType, int theX, int theY, bool flag1
 		flag1 = true;
 	if (theX == -1)
 	{
-		theX = mApp->mSeed->Next() % 265 + 105;
-		theY = mApp->mSeed->Next() % 520 + 20;
+		theX = mApp->mSeed->Next() % (520 + MOD_EXTRA_WIDTH) + 20;
+		theY = mApp->mSeed->Next() % (265 + MOD_EXTRA_HEIGHT) + 105;
 	}
 	GameObject* aPet = nullptr;
 	if (thePetType == PET_STINKY || thePetType == PET_NIKO ||
@@ -5384,7 +5395,7 @@ GameObject* Sexy::Board::SpawnLarva(int theX, int theY)
 
 void Sexy::Board::SpawnAlien(int theType, bool unk)
 {
-	SpawnAlien(theType, mApp->mSeed->Next() % 450 + 20, mApp->mSeed->Next() % 195 + 105, unk);
+	SpawnAlien(theType, mApp->mSeed->Next() % (450 + MOD_EXTRA_WIDTH) + 20, mApp->mSeed->Next() % (195 + MOD_EXTRA_HEIGHT) + 105, unk);
 }
 
 void Sexy::Board::SpawnAlien(int theType, int theX, int theY, bool unk)
@@ -5577,18 +5588,18 @@ void Board::DrawOverlay1(Graphics* g)
 		return;
 
 	g->SetColor(Color::Black);
-	g->FillRect(0, 0, 640, 60);
-	g->FillRect(0, 445, 640, 35);
+	g->FillRect(0, 0, 640 + MOD_EXTRA_WIDTH, 60);
+	g->FillRect(0, 445 + MOD_EXTRA_HEIGHT, 640 + MOD_EXTRA_WIDTH, 35);
 	g->SetFont(FONT_CONTINUUMBOLD14);
 	g->SetColor(Color::White);
 	SexyString aWarning = "Warning: Insaniquarium is running.  Shells collected here may not be saved.";
 	int aStrWdth = g->GetFont()->StringWidth(aWarning);
 	if (mApp->mScreenSaverUnk01)
 	{
-		int aY = 465;
+		int aY = 465 + MOD_EXTRA_HEIGHT;
 		if ((mUpdateCnt / 1000 % 2) == 0)
 			aY = 40;
-		DrawStringWithOutline(g, aWarning, 320 - aStrWdth / 2, aY, FONT_CONTINUUMBOLD14OUTLINE, 0x29558c);
+		DrawStringWithOutline(g, aWarning, 320 + MOD_EXTRA_WIDTH / 2 - aStrWdth / 2, aY, FONT_CONTINUUMBOLD14OUTLINE, 0x29558c);
 	}
 	g->SetFont(FONT_CONTINUUMBOLD14);
 	g->SetColor(Color(0xffffff));
@@ -5600,16 +5611,16 @@ void Board::DrawOverlay1(Graphics* g)
 	switch (mUpdateCnt / 1000 % 4)
 	{
 	case 0:
-		aStrX = 630 - aStrWdth;
-		aStrY = 468;
+		aStrX = 630 + MOD_EXTRA_WIDTH - aStrWdth;
+		aStrY = 468 + MOD_EXTRA_HEIGHT;
 		break;
 	case 1:
-		aStrX = 630 - aStrWdth;
+		aStrX = 630 + MOD_EXTRA_WIDTH - aStrWdth;
 		aStrY = 40;
 		break;
 	case 2:
 		aStrX = 10;
-		aStrY = 468;
+		aStrY = 468 + MOD_EXTRA_HEIGHT;
 		break;
 	case 3:
 		aStrX = 10;
@@ -5637,7 +5648,7 @@ void Board::DrawOverlay1(Graphics* g)
 				anAlpha = InterpolateInt(200, 0, aTimer - 1650, 30, false);
 			}
 			g->SetColor(Color(0, 0, 0, anAlpha));
-			g->FillRect(0, 60, 640, 385);
+			g->FillRect(0, 60, 640 + MOD_EXTRA_WIDTH, 385 + MOD_EXTRA_HEIGHT);
 		}
 	}
 }
@@ -5648,7 +5659,7 @@ void Sexy::Board::DrawTankBackground(Graphics* g)
 	if (aCurProf->mCheatCodeFlags >> 2 & 1)
 	{
 		g->SetColor(Color(0xffffff));
-		g->FillRect(0, 0, 640, 480);
+		g->FillRect(0, 0, MOD_SCREEN_WIDTH, MOD_SCREEN_HEIGHT);
 		return;
 	}
 	if (aCurProf->mCheatCodeFlags >> 3 & 1)
@@ -5663,7 +5674,7 @@ void Sexy::Board::DrawTankBackground(Graphics* g)
 		aRandTransX = rand() % 5 - 2;
 		aRandTransY = rand() % 5 - 2;
 		g->SetColor(Color::Black);
-		g->FillRect(0, 0, 640, 480);
+		g->FillRect(0, 0, MOD_SCREEN_WIDTH, MOD_SCREEN_HEIGHT);
 		g->Translate(aRandTransX, aRandTransY);
 	}
 	Image* anAquariumImg = GetImageById(mCurrentBackgroundId + IMAGE_AQUARIUM1_ID - 1);
@@ -5684,23 +5695,27 @@ void Sexy::Board::DrawTankBackground(Graphics* g)
 
 	if (isAccel)
 	{
+		// The lighting and its mask are scaled with the background, so they scroll and
+		// sit in the background's scaled coordinates.
+		const int aLightY = MOD_BG_Y(365);
+		const double aScale = MOD_BG_SCALE;
 		g->SetDrawMode(Graphics::DRAWMODE_ADDITIVE);
 		g->SetColorizeImages(true);
 		g->SetColor(Color(255, 255, 255, 40));
-		g->DrawImage(IMAGE_TANKLIGHTING, mTankLightingSpeeds[0], 365);
-		g->DrawImage(IMAGE_TANKLIGHTING, mTankLightingSpeeds[0] - 640.0, 365);
+		g->DrawImage(IMAGE_TANKLIGHTING, mTankLightingSpeeds[0] * aScale, aLightY);
+		g->DrawImage(IMAGE_TANKLIGHTING, (mTankLightingSpeeds[0] - 640.0) * aScale, aLightY);
 
 		g->SetColor(Color(255, 255, 255, 100));
-		g->DrawImage(IMAGE_TANKLIGHTING, mTankLightingSpeeds[1], 365);
-		g->DrawImage(IMAGE_TANKLIGHTING, mTankLightingSpeeds[1] - 640.0, 365);
+		g->DrawImage(IMAGE_TANKLIGHTING, mTankLightingSpeeds[1] * aScale, aLightY);
+		g->DrawImage(IMAGE_TANKLIGHTING, (mTankLightingSpeeds[1] - 640.0) * aScale, aLightY);
 
 		g->SetColor(Color(255, 255, 255, 70));
-		g->DrawImageMirror(IMAGE_TANKLIGHTING, mTankLightingSpeeds[2], 365, true);
-		g->DrawImageMirror(IMAGE_TANKLIGHTING, mTankLightingSpeeds[2] - 640.0, 365, true);
+		g->DrawImageMirror(IMAGE_TANKLIGHTING, mTankLightingSpeeds[2] * aScale, aLightY, true);
+		g->DrawImageMirror(IMAGE_TANKLIGHTING, (mTankLightingSpeeds[2] - 640.0) * aScale, aLightY, true);
 		g->SetColorizeImages(false);
 		g->SetDrawMode(Graphics::DRAWMODE_NORMAL);
 
-		g->DrawImage(GetImageById(mCurrentBackgroundId - 1 + IMAGE_TANKMASK1_ID), 0, 365);
+		g->DrawImage(GetImageById(mCurrentBackgroundId - 1 + IMAGE_TANKMASK1_ID), 0, aLightY);
 	}
 	g->Translate(-aRandTransX, -aRandTransY);
 }
@@ -5711,9 +5726,9 @@ void Sexy::Board::DrawTankWaves(Graphics* g, int theY)
 	int aCel = IMAGE_WAVE->GetAnimCel(mGameUpdateCnt);
 	Rect aRect = IMAGE_WAVE->GetCelRect(aCel);
 	g->DrawImageMirror(IMAGE_WAVESIDE, 0, theY, aRect, false);
-	g->DrawImageCel(IMAGE_WAVE, 160, theY, aCel);
-	g->DrawImageCel(IMAGE_WAVE, 320, theY, aCel);
-	g->DrawImageMirror(IMAGE_WAVESIDE, 480, theY, aRect, true);
+	for (int x = 160; x < MOD_SCREEN_WIDTH - 160; x += 160)
+		g->DrawImageCel(IMAGE_WAVE, x, theY, aCel);
+	g->DrawImageMirror(IMAGE_WAVESIDE, MOD_SCREEN_WIDTH - 160, theY, aRect, true);
 	g->SetDrawMode(Graphics::DRAWMODE_NORMAL);
 }
 
@@ -5761,8 +5776,8 @@ void Sexy::Board::DrawBonusRound(Graphics* g)
 	int aBonusTimer = mGameUpdateCnt - m0x2a8; // ivar11
 	Color aColor = g->GetColor();//loc1a4, 1a0, 19c, 198
 
-	int anXBucketPos = 260; // loc16c
-	int anYBucketPos = 265; // loc168
+	int anXBucketPos = 260 + MOD_EXTRA_WIDTH / 2; // loc16c
+	int anYBucketPos = 265 + MOD_EXTRA_HEIGHT; // loc168
 	if (!mBonusRoundStarted)
 	{
 		if (aBonusTimer > 129)
@@ -5816,7 +5831,7 @@ void Sexy::Board::DrawBonusRound(Graphics* g)
 		int anXStrOffset = 0;
 		if (!mBonusRoundStarted && aBonusTimer < 8)
 			anXStrOffset = ((8 - aBonusTimer) * aStrWdth * -2) / 8;
-		DrawCoolBonusString(g, aStr, aCenteredStrX + anXStrOffset, 235);
+		DrawCoolBonusString(g, aStr, aCenteredStrX + anXStrOffset, 235 + MOD_EXTRA_HEIGHT / 2);
 		g->SetFont(FONT_CONTINUUMBOLD14);
 		g->SetColor(Color(180, 250, 90, anAlphaVal));
 
@@ -5828,9 +5843,9 @@ void Sexy::Board::DrawBonusRound(Graphics* g)
 			anXStrOffset = ((8 - aBonusTimer) * aStrWdth * 2) / 8;
 
 		Color aStrColor(0, 75, 0, anAlphaVal);
-		DrawStringWithOutline(g, aStr, aCenteredStrX + anXStrOffset, 260, FONT_CONTINUUMBOLD14OUTLINE, aStrColor.ToInt());
-		
-		float anInterpolatedVal = 280;
+		DrawStringWithOutline(g, aStr, aCenteredStrX + anXStrOffset, 260 + MOD_EXTRA_HEIGHT / 2, FONT_CONTINUUMBOLD14OUTLINE, aStrColor.ToInt());
+
+		float anInterpolatedVal = 280 + MOD_EXTRA_HEIGHT / 2;
 		if (!mBonusRoundStarted)
 			anInterpolatedVal += InterpolateInt(520, 0, aBonusTimer, 16, false);
 
@@ -5883,7 +5898,7 @@ void Sexy::Board::DrawBonusRound(Graphics* g)
 			int aScaledHeight = aHeight * aScale;
 			int aHalfScaledHeight = (aScale - 1.0) * aHeight * 0.5;
 			int aX = (mWidth - aScaledWidth) / 2;
-			int aY = 90 - aHalfScaledHeight;
+			int aY = 90 + MOD_EXTRA_HEIGHT / 2 - aHalfScaledHeight;
 
 			g->SetFastStretch(!mApp->Is3DAccelerated());
 			Rect aSrcRect = Rect(0, 0, aWidth, aHeight);
@@ -5913,7 +5928,7 @@ void Sexy::Board::DrawBonusRound(Graphics* g)
 
 	SexyString aTimeRStr = StrFormat("Time Remaining: %d:%02d", aMins, aSecs);
 
-	g->DrawString(aTimeRStr, 465, 470);
+	g->DrawString(aTimeRStr, 465 + MOD_EXTRA_WIDTH, 470 + MOD_EXTRA_HEIGHT);
 }
 
 void Sexy::Board::DrawCoolBonusString(Graphics* g, SexyString& theString, int theX, int theY)
@@ -5947,8 +5962,8 @@ Sexy::BoardOverlay::BoardOverlay(Board* theBoard, int thePriority)
 	mPriority = thePriority;
 	mHasAlpha = true;
 	mMouseVisible = false;
-	mWidth = 640;
-	mHeight = 480;
+	mWidth = MOD_SCREEN_WIDTH;
+	mHeight = MOD_SCREEN_HEIGHT;
 }
 
 Sexy::BoardOverlay::~BoardOverlay()

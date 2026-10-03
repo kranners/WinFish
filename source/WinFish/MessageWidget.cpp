@@ -4,6 +4,7 @@
 #include "WinFishApp.h"
 #include "Board.h"
 #include "Res.h"
+#include "ModConfig.h"
 
 using namespace Sexy;
 
@@ -15,8 +16,8 @@ Sexy::MessageWidget::MessageWidget(WinFishApp* theApp, SexyString theMessage)
 	mApp = theApp;
 	mFont = FONT_CONTINUUMBOLD14OUTLINE;
 	mMessage = theMessage;
-	mX = 90;
-	mY = 445;
+	mX = 90 + MOD_EXTRA_WIDTH / 2;
+	mY = 445 + MOD_EXTRA_HEIGHT;
 	mWidth = 460;
 	mHeight = mFont->GetHeight() + 6;
 	mMessageTimer = 185;

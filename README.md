@@ -18,6 +18,8 @@ This fork of [Vindirect/WinFish](https://github.com/Vindirect/WinFish) adds a sc
 
 In VS Code (with the C/C++ extension): `Ctrl+Shift+B` builds and `F5` builds and launches under the debugger.
 
+**HD tank:** the game runs at 1920x1080. The tank grows to fill the screen while every sprite keeps its native size; only the tank backgrounds are scaled up (3x, cropped from the top). The HUD bar, menus and dialogs stay at their original size, centered. Screen-size constants and the helpers used to move hardcoded 640x480 positions live in `source/WinFish/ModConfig.h`.
+
 The mod runs under its own registry key (`HKCU\Software\PopCap\InsaniquariumMod`) and save folder (`C:\ProgramData\PopCap Games\InsaniquariumMod`), so it never touches the retail game's settings or saves. It starts windowed. See `source/WinFish/ModConfig.h`.
 
 Only `Debug|Win32` is fully configured upstream. CI compiles every push without game assets.

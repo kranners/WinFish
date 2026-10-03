@@ -746,8 +746,8 @@ Sexy::SimFishScreen::SimFishScreen(WinFishApp* theApp)
 	mY = 0;
 	m0x10c = 25;
 	m0x110 = 94;
-	mWidth = mApp->mWidth;
-	mHeight = mApp->mHeight;
+	mWidth = 640;
+	mHeight = 480;
 
 	mHideAllButton = MakeDialogButton2(105, this, "Hide All", IMAGE_MAINBUTTON);
 	mHideAllButton->Resize(500, 4, 100, mHideAllButton->mHeight);
@@ -868,28 +868,28 @@ void Sexy::SimFishScreen::AddedToManager(WidgetManager* theWidgetManager)
 {
 	Widget::AddedToManager(theWidgetManager);
 	for (int i = 0; i < 20;i++)
-		theWidgetManager->AddWidget(mObjectButtons[i]);
-	theWidgetManager->AddWidget(mOverlay);
-	theWidgetManager->AddWidget(mReturnButton);
-	theWidgetManager->AddWidget(mHideAllButton);
-	theWidgetManager->AddWidget(mShowAllButton);
-	theWidgetManager->AddWidget(mSellButton);
-	theWidgetManager->AddWidget(mHideShowButton);
-	theWidgetManager->AddWidget(mRenameButton);
+		AddWidget(mObjectButtons[i]);
+	AddWidget(mOverlay);
+	AddWidget(mReturnButton);
+	AddWidget(mHideAllButton);
+	AddWidget(mShowAllButton);
+	AddWidget(mSellButton);
+	AddWidget(mHideShowButton);
+	AddWidget(mRenameButton);
 }
 
 void Sexy::SimFishScreen::RemovedFromManager(WidgetManager* theWidgetManager)
 {
-	Widget::RemovedFromManager(theWidgetManager);
 	for (int i = 0; i < 20;i++)
-		theWidgetManager->RemoveWidget(mObjectButtons[i]);
-	theWidgetManager->RemoveWidget(mOverlay);
-	theWidgetManager->RemoveWidget(mReturnButton);
-	theWidgetManager->RemoveWidget(mHideAllButton);
-	theWidgetManager->RemoveWidget(mShowAllButton);
-	theWidgetManager->RemoveWidget(mSellButton);
-	theWidgetManager->RemoveWidget(mHideShowButton);
-	theWidgetManager->RemoveWidget(mRenameButton);
+		RemoveWidget(mObjectButtons[i]);
+	RemoveWidget(mOverlay);
+	RemoveWidget(mReturnButton);
+	RemoveWidget(mHideAllButton);
+	RemoveWidget(mShowAllButton);
+	RemoveWidget(mSellButton);
+	RemoveWidget(mHideShowButton);
+	RemoveWidget(mRenameButton);
+	Widget::RemovedFromManager(theWidgetManager);
 }
 
 void Sexy::SimFishScreen::Update()
@@ -911,15 +911,7 @@ void Sexy::SimFishScreen::Update()
 
 void Sexy::SimFishScreen::OrderInManagerChanged()
 {
-	for (int i = 0; i < 20;i++)
-		mWidgetManager->BringToFront(mObjectButtons[i]);
-	mWidgetManager->BringToFront(mOverlay);
-	mWidgetManager->BringToFront(mReturnButton);
-	mWidgetManager->BringToFront(mHideAllButton);
-	mWidgetManager->BringToFront(mShowAllButton);
-	mWidgetManager->BringToFront(mSellButton);
-	mWidgetManager->BringToFront(mHideShowButton);
-	mWidgetManager->BringToFront(mRenameButton);
+	Widget::OrderInManagerChanged();
 }
 
 void Sexy::SimFishScreen::DrawOverlay(Graphics* g)

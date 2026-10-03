@@ -17,8 +17,8 @@ Sexy::SimSetupScreen::SimSetupScreen(WinFishApp* theApp)
 	m0x9c = false;
 	mX = 0;
 	mY = 0;
-	mWidth = mApp->mWidth;
-	mHeight = mApp->mHeight;
+	mWidth = 640;
+	mHeight = 480;
 	mApp->StopMusic();
 	mApp->PlayMusic(2, 0);
 	m0x98 = 140;
@@ -85,31 +85,31 @@ Sexy::SimSetupScreen::~SimSetupScreen()
 void Sexy::SimSetupScreen::AddedToManager(WidgetManager* theWidgetManager)
 {
 	Widget::AddedToManager(theWidgetManager);
-	theWidgetManager->AddWidget(mReturnButton);
-	theWidgetManager->AddWidget(mSSButton);
-	theWidgetManager->AddWidget(mPrevButton);
-	theWidgetManager->AddWidget(mNextButton);
-	theWidgetManager->AddWidget(mSellButton);
-	theWidgetManager->AddWidget(mFishNamesCB);
-	theWidgetManager->AddWidget(mBubbulatorCB);
-	theWidgetManager->AddWidget(mAttractorCB);
-	theWidgetManager->AddWidget(mShowHungryCB);
-	theWidgetManager->AddWidget(mDropShellsCB);
+	AddWidget(mReturnButton);
+	AddWidget(mSSButton);
+	AddWidget(mPrevButton);
+	AddWidget(mNextButton);
+	AddWidget(mSellButton);
+	AddWidget(mFishNamesCB);
+	AddWidget(mBubbulatorCB);
+	AddWidget(mAttractorCB);
+	AddWidget(mShowHungryCB);
+	AddWidget(mDropShellsCB);
 }
 
 void Sexy::SimSetupScreen::RemovedFromManager(WidgetManager* theWidgetManager)
 {
+	RemoveWidget(mReturnButton);
+	RemoveWidget(mSSButton);
+	RemoveWidget(mPrevButton);
+	RemoveWidget(mNextButton);
+	RemoveWidget(mSellButton);
+	RemoveWidget(mFishNamesCB);
+	RemoveWidget(mBubbulatorCB);
+	RemoveWidget(mAttractorCB);
+	RemoveWidget(mShowHungryCB);
+	RemoveWidget(mDropShellsCB);
 	Widget::RemovedFromManager(theWidgetManager);
-	theWidgetManager->RemoveWidget(mReturnButton);
-	theWidgetManager->RemoveWidget(mSSButton);
-	theWidgetManager->RemoveWidget(mPrevButton);
-	theWidgetManager->RemoveWidget(mNextButton);
-	theWidgetManager->RemoveWidget(mSellButton);
-	theWidgetManager->RemoveWidget(mFishNamesCB);
-	theWidgetManager->RemoveWidget(mBubbulatorCB);
-	theWidgetManager->RemoveWidget(mAttractorCB);
-	theWidgetManager->RemoveWidget(mShowHungryCB);
-	theWidgetManager->RemoveWidget(mDropShellsCB);
 }
 
 void Sexy::SimSetupScreen::Update()

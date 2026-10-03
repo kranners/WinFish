@@ -3,6 +3,7 @@
 #include "StarField.h"
 #include "WinFishApp.h"
 #include "Board.h"
+#include "ModConfig.h"
 
 using namespace Sexy;
 
@@ -23,15 +24,23 @@ void Sexy::StarField::Init(int theMaxStars)
 {
 	mMaxStars = theMaxStars;
 	if (mNebulaImage == nullptr)
-		mNebulaImage = gSexyApp->GetImage("images/nebula1");
+	{
+		// Scaled up like the tank backgrounds so it fills the HD screen without seams.
+		Image* aNebulaImage = gSexyApp->GetImage("images/nebula1");
+		if (aNebulaImage != nullptr)
+		{
+			mNebulaImage = ((WinFishApp*)gSexyApp)->ModScaleImage(aNebulaImage, MOD_BG_CROP_Y);
+			delete aNebulaImage;
+		}
+	}
 
 	mStarList.clear();
 	if (theMaxStars > 0)
 	{
 		for (int i = 0; i < theMaxStars; ++i)
 		{
-			int x = Rand() % 640;
-			int y = Rand() % 480;
+			int x = Rand() % MOD_SCREEN_WIDTH;
+			int y = Rand() % MOD_SCREEN_HEIGHT;
 
 			AddStar(x, y);
 		}
@@ -85,7 +94,7 @@ void Sexy::StarField::Update()
 
 	for (int i = mStarList.size(); i < mMaxStars; i++)
 	{
-		AddStar(640, Rand() % 480);
+		AddStar(MOD_SCREEN_WIDTH, Rand() % MOD_SCREEN_HEIGHT);
 	}
 }
 
@@ -95,20 +104,27 @@ void Sexy::StarField::Draw(Graphics* g, bool flag)
 	if (!mNebulaImage)
 	{
 		g->SetColor(Color::Black);
-		g->FillRect(0, 0, 640, 480);
+		g->FillRect(0, 0, MOD_SCREEN_WIDTH, MOD_SCREEN_HEIGHT);
 	}
 	else
 	{
 		int aImgWdth = mNebulaImage->mWidth;
+		int aImgHght = mNebulaImage->mHeight;
 		int aX = (aImgWdth - aBoard->mGameUpdateCnt / 2 % aImgWdth)-1;
-		g->DrawImage(mNebulaImage, aX - aImgWdth, 0);
-		g->DrawImage(mNebulaImage, aX, 0);
-		g->DrawImage(mNebulaImage, aX + aImgWdth, 0);
+		for (int aY = 0; aY < MOD_SCREEN_HEIGHT; aY += aImgHght)
+		{
+			g->DrawImage(mNebulaImage, aX - aImgWdth, aY);
+			g->DrawImage(mNebulaImage, aX, aY);
+			g->DrawImage(mNebulaImage, aX + aImgWdth, aY);
+		}
 		if (flag)
 		{
-			aBoard->Unk06(g, mNebulaImage, aX - aImgWdth, 0, 8.0);
-			aBoard->Unk06(g, mNebulaImage, aX, 0, 8.0);
-			aBoard->Unk06(g, mNebulaImage, aX + aImgWdth, 0, 8.0);
+			for (int aY = 0; aY < MOD_SCREEN_HEIGHT; aY += aImgHght)
+			{
+				aBoard->Unk06(g, mNebulaImage, aX - aImgWdth, aY, 8.0);
+				aBoard->Unk06(g, mNebulaImage, aX, aY, 8.0);
+				aBoard->Unk06(g, mNebulaImage, aX + aImgWdth, aY, 8.0);
+			}
 		}
 	}
 	StarList::iterator it;

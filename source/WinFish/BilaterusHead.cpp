@@ -7,6 +7,7 @@
 #include "Fish.h"
 #include "Shadow.h"
 #include "Res.h"
+#include "ModConfig.h"
 
 using namespace Sexy;
 
@@ -31,12 +32,12 @@ Sexy::BilaterusHead::BilaterusHead(Bilaterus* theBilaterus,int theX, int theY, b
 		m0x1a0 = -1.0;
 	}
 	m0x188 = 0;
-	m0x1a8 = 370;
+	m0x1a8 = 370 + MOD_EXTRA_HEIGHT;
 	m0x190 = 0;
 	m0x1b0 = 95;
 	m0x1ac = 10;
 	m0x198 = 0.8;
-	m0x1b4 = 540;
+	m0x1b4 = 540 + MOD_EXTRA_WIDTH;
 	m0x1d8 = 100.0;
 	m0x1e0 = 0;
 	m0x1e8 = 0;
@@ -136,6 +137,8 @@ void Sexy::BilaterusHead::Sync(DataSync* theSync)
 	theSync->SyncLong(m0x1ac);
 	theSync->SyncLong(m0x1b0);
 	theSync->SyncLong(m0x1b4);
+	if (theSync->mReader != NULL)
+		ModMigrateBounds(m0x1b4, m0x1b0, m0x1a8);
 	theSync->SyncLong(m0x1b8);
 	theSync->SyncLong(m0x1bc);
 	theSync->SyncLong(m0x1c0);

@@ -17,8 +17,8 @@ Sexy::TankScreen::TankScreen(WinFishApp* theApp)
 	mApp = theApp;
 	mX = 0;
 	mY = 0;
-	mWidth = theApp->mWidth;
-	mHeight = theApp->mHeight;
+	mWidth = 640;
+	mHeight = 480;
 	mMenuButton = MakeDialogButton2(99, this, "Menu", IMAGE_MAINBUTTON);
 	mMenuButton->Resize(525, 4, 80, mMenuButton->mHeight);
 	mStoriesButton = MakeDialogButton(4, this, "Stories", FONT_JUNGLEFEVER12OUTLINE);
@@ -57,7 +57,7 @@ Sexy::TankScreen::~TankScreen()
 void Sexy::TankScreen::AddedToManager(WidgetManager* theWidgetManager)
 {
 	Widget::AddedToManager(theWidgetManager);
-	theWidgetManager->AddWidget(mMenuButton);
+	AddWidget(mMenuButton);
 	for (int i = 0; i < 4; i++)
 	{
 		if (mApp->mGameMode == GAMEMODE_TIME_TRIAL)
@@ -84,20 +84,20 @@ void Sexy::TankScreen::AddedToManager(WidgetManager* theWidgetManager)
 			else
 				mTankButtons[i]->SetDisabled(false);
 		}
-		theWidgetManager->AddWidget(mTankButtons[i]);
+		AddWidget(mTankButtons[i]);
 	}
 
 
-	theWidgetManager->AddWidget(mStoriesButton);
+	AddWidget(mStoriesButton);
 }
 
 void Sexy::TankScreen::RemovedFromManager(WidgetManager* theWidgetManager)
 {
-	Widget::RemovedFromManager(theWidgetManager);
-	theWidgetManager->RemoveWidget(mMenuButton);
+	RemoveWidget(mMenuButton);
 	for (int i = 0; i < 4; i++)
-		theWidgetManager->RemoveWidget(mTankButtons[i]);
-	theWidgetManager->RemoveWidget(mStoriesButton);
+		RemoveWidget(mTankButtons[i]);
+	RemoveWidget(mStoriesButton);
+	Widget::RemovedFromManager(theWidgetManager);
 }
 
 void Sexy::TankScreen::Update()

@@ -70,15 +70,15 @@ TitleScreen::~TitleScreen()
 void TitleScreen::AddedToManager(WidgetManager* theWidgetManager)
 {
 	Widget::AddedToManager(theWidgetManager);
-	theWidgetManager->AddWidget(mHyperlink2);
-	theWidgetManager->AddWidget(mHyperlink1);
+	AddWidget(mHyperlink2);
+	AddWidget(mHyperlink1);
 }
 
 void TitleScreen::RemovedFromManager(WidgetManager* theWidgetManager)
 {
+	RemoveWidget(mHyperlink2);
+	RemoveWidget(mHyperlink1);
 	Widget::RemovedFromManager(theWidgetManager);
-	theWidgetManager->RemoveWidget(mHyperlink2);
-	theWidgetManager->RemoveWidget(mHyperlink1);
 }
 
 void TitleScreen::Draw(Graphics* g)
@@ -228,7 +228,7 @@ void TitleScreen::Update()
 void Sexy::TitleScreen::Resize(int theX, int theY, int theWidth, int theHeight)
 {
 	Widget::Resize(theX, theY, theWidth, theHeight);
-	mHyperlink2->Resize(mWidth - mHyperlink2->mWidth / 2 + theX, 350, mHyperlink2->mWidth, mHyperlink2->mHeight);
+	mHyperlink2->Resize(mWidth - mHyperlink2->mWidth / 2, 350, mHyperlink2->mWidth, mHyperlink2->mHeight);
 }
 
 void Sexy::TitleScreen::ButtonPress(int theId)

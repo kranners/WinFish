@@ -7,6 +7,7 @@
 #include "Missle.h"
 #include "Shadow.h"
 #include "Res.h"
+#include "ModConfig.h"
 
 Sexy::Grubber::Grubber()
 {
@@ -67,7 +68,7 @@ void Sexy::Grubber::Update()
 
 	mEatFoodDelayTimer++;
 	mSpeedChangeTimer++;
-	if (mSpeedChangeTimer > 20 || mXD <= 10.0 || mXD >= 540.0)
+	if (mSpeedChangeTimer > 20 || mXD <= 10.0 || mXD >= 540.0 + MOD_EXTRA_WIDTH)
 	{
 		mSpeedChangeTimer = 0;
 		if (mApp->mSeed->Next() % 10 == 0)
@@ -76,13 +77,13 @@ void Sexy::Grubber::Update()
 
 	if (!mApp->mBoard->AliensInTank())
 		CoinDrop();
-	if (mXD > 560.0)
-		mXD = 560.0;
+	if (mXD > 560.0 + MOD_EXTRA_WIDTH)
+		mXD = 560.0 + MOD_EXTRA_WIDTH;
 	if (mXD < 10.0)
 		mXD = 10.0;
-	if (mYD > 355.0)
+	if (mYD > 355.0 + MOD_EXTRA_HEIGHT)
 	{
-		mYD = 355.0;
+		mYD = 355.0 + MOD_EXTRA_HEIGHT;
 		mVY = 0.0;
 	}
 	if (mBoughtTimer > 0)
@@ -100,11 +101,11 @@ void Sexy::Grubber::Update()
 			mYD = 95.0;
 	}
 
-	if (mXD > 535.0 && mVX > 0.1)
+	if (mXD > 535.0 + MOD_EXTRA_WIDTH && mVX > 0.1)
 		mVX -= 0.1;
 	if (mXD < 15.0 && mVX < -0.1)
 		mVX += 0.1;
-	if (mYD < 355.0)
+	if (mYD < 355.0 + MOD_EXTRA_HEIGHT)
 		mVY += 0.4;
 
 	UpdateAnimations();
@@ -244,7 +245,7 @@ void Sexy::Grubber::Init()
 {
 	mType = TYPE_GRUBBER;
 	mClip = false;
-	mYD = mApp->mSeed->Next() % 5 + 360;
+	mYD = mApp->mSeed->Next() % 5 + 360 + MOD_EXTRA_HEIGHT;
 	mY = mYD;
 	mVX = 0;
 	mVY = 0;
@@ -347,7 +348,7 @@ bool Sexy::Grubber::HungryBehavior()
 		if (mYD + 40.0 < (aNearestFood->mHeight > 80 ? aNearestFood->mY + 240 : aNearestFood->mY + 160) &&
 			mYD + 40.0 > aNearestFood->mY - 20 &&
 			mXD + 40.0 < aNearestFood->mX + 80 && 
-			mXD + 40.0 > aNearestFood->mX && mYD >= 355.0)
+			mXD + 40.0 > aNearestFood->mX && mYD >= 355.0 + MOD_EXTRA_HEIGHT)
 		{
 			mSpeedySpeedState = 100;
 			ShowInvisibility();

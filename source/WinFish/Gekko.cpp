@@ -8,6 +8,7 @@
 #include "Missle.h"
 #include "Shadow.h"
 #include "Res.h"
+#include "ModConfig.h"
 
 Sexy::Gekko::Gekko()
 {
@@ -404,7 +405,7 @@ void Sexy::Gekko::Init()
 	mIsGuppy = false;
 	mSize = TYPE_GEKKO;
 	mYMin = 105;
-	mYMax = 360;
+	mYMax = 360 + MOD_EXTRA_HEIGHT;
 	mMouseVisible = gUnkBool06;
 	mCoinDropT = DetermineCoinDropT(mApp->mSeed->Next() % 250 + 200);
 }

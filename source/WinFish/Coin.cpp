@@ -17,6 +17,7 @@
 #include "BilaterusHead.h"
 #include "Missle.h"
 #include "Res.h"
+#include "ModConfig.h"
 
 using namespace Sexy;
 
@@ -145,9 +146,9 @@ void Sexy::Coin::Update()
 			else
 				mYD += 0.8;
 
-			if (mYD > 370.0)
+			if (mYD > 370.0 + MOD_EXTRA_HEIGHT)
 			{
-				mYD = 370.0;
+				mYD = 370.0 + MOD_EXTRA_HEIGHT;
 				if (mApp->mBoard->mIsBonusRound)
 					mDisappearTimer = 5;
 				m0x19c++;
@@ -327,10 +328,10 @@ void Sexy::Coin::Update()
 	{
 		if (!mApp->mBoard->mIsBonusRound)
 		{
-			if (mXD < 550.0)
-				mXD = (550.0 - mXD) / 7.0 + mXD;
-			else if (mXD > 550.0)
-				mXD = mXD - (mXD - 550.0) / 7.0;
+			if (mXD < 550.0 + MOD_HUD_X)
+				mXD = (550.0 + MOD_HUD_X - mXD) / 7.0 + mXD;
+			else if (mXD > 550.0 + MOD_HUD_X)
+				mXD = mXD - (mXD - (550.0 + MOD_HUD_X)) / 7.0;
 
 			if (mYD < 30.0)
 				mYD = (30.0 - mYD) / 7.0 + mYD;
@@ -347,8 +348,8 @@ void Sexy::Coin::Update()
 		else
 		{ // 358
 			m0x17c++;
-			int aXDist = m0x180 - (260 + 30);
-			int aYDist = m0x184 - (265 + 50);
+			int aXDist = m0x180 - (260 + MOD_EXTRA_WIDTH / 2 + 30);
+			int aYDist = m0x184 - (265 + MOD_EXTRA_HEIGHT + 50);
 			int aDist = aXDist * aXDist + aYDist * aYDist;
 			int aVal = aDist < 22501 ? 5 : 15;
 			if (aVal <= m0x17c)
@@ -358,9 +359,9 @@ void Sexy::Coin::Update()
 				return;
 			}
 			int aSomeDist = aVal - m0x17c;
-			mXD = (aSomeDist * m0x180 + (260 + 30) * m0x17c) / aVal;
+			mXD = (aSomeDist * m0x180 + (260 + MOD_EXTRA_WIDTH / 2 + 30) * m0x17c) / aVal;
 			// 375 iVar3 = iVar3 % iVar9; ?
-			mYD = (aSomeDist * m0x184 + (265 + 50) * m0x17c) / aVal;
+			mYD = (aSomeDist * m0x184 + (265 + MOD_EXTRA_HEIGHT + 50) * m0x17c) / aVal;
 		}
 	}
 

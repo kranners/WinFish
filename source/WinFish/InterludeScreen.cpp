@@ -34,8 +34,8 @@ Sexy::InterludeScreen::InterludeScreen(WinFishApp* theApp, int unk)
 
 	mX = 0;
 	mY = 0;
-	mWidth = mApp->mWidth;
-	mHeight = mApp->mHeight;
+	mWidth = 640;
+	mHeight = 480;
 
 	m0xb4 = 0;
 	m0xac = 540;
@@ -93,15 +93,15 @@ Sexy::InterludeScreen::~InterludeScreen()
 void Sexy::InterludeScreen::AddedToManager(WidgetManager* theWidgetManager)
 {
 	Widget::AddedToManager(theWidgetManager);
-	theWidgetManager->AddWidget(mOverlay);
-	theWidgetManager->AddWidget(mBackButton);
+	AddWidget(mOverlay);
+	AddWidget(mBackButton);
 }
 
 void Sexy::InterludeScreen::RemovedFromManager(WidgetManager* theWidgetManager)
 {
+	RemoveWidget(mOverlay);
+	RemoveWidget(mBackButton);
 	Widget::RemovedFromManager(theWidgetManager);
-	theWidgetManager->RemoveWidget(mOverlay);
-	theWidgetManager->RemoveWidget(mBackButton);
 }
 
 void Sexy::InterludeScreen::Update()

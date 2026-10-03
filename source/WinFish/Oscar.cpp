@@ -7,6 +7,7 @@
 #include "Missle.h"
 #include "Shadow.h"
 #include "Res.h"
+#include "ModConfig.h"
 
 using namespace Sexy;
 
@@ -40,7 +41,7 @@ void Sexy::Oscar::Init(int theX, int theY)
 	mType = TYPE_OSCAR;
 	mSize = TYPE_OSCAR;
 	mIsGuppy = false;
-	mYMax = 360;
+	mYMax = 360 + MOD_EXTRA_HEIGHT;
 	mHunger = mApp->mSeed->Next() % 200 + 600;
 	mMouseVisible = gUnkBool06;
 	if (mApp->mRelaxMode)

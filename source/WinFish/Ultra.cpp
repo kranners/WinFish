@@ -9,6 +9,7 @@
 #include "Shadow.h"
 #include "Coin.h"
 #include "Res.h"
+#include "ModConfig.h"
 
 Sexy::Ultra::Ultra()
 {
@@ -489,10 +490,10 @@ void Sexy::Ultra::Init()
 	mWidth = 160;
 	mHeight = 160;
 	mIsGuppy = false;
-	mYMax = 310;
+	mYMax = 310 + MOD_EXTRA_HEIGHT;
 	mYMin = 75;
 	mXMin = 0;
-	mXMax = 480;
+	mXMax = 480 + MOD_EXTRA_WIDTH;
 	mHunger = mApp->mSeed->Next() % 200 + 600;
 	mMouseVisible = gUnkBool06;
 	mCoinDropT = DetermineCoinDropT(mApp->mSeed->Next() % 250 + 200);

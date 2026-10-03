@@ -105,19 +105,19 @@ Sexy::BonusScreen::~BonusScreen()
 void Sexy::BonusScreen::AddedToManager(WidgetManager* theWidgetManager)
 {
 	Widget::AddedToManager(theWidgetManager);
-	theWidgetManager->AddWidget(mContinueButton);
-	theWidgetManager->AddWidget(mMenuButton);
-	theWidgetManager->AddWidget(mUnkButton1);
-	theWidgetManager->AddWidget(mOverlay);
+	AddWidget(mContinueButton);
+	AddWidget(mMenuButton);
+	AddWidget(mUnkButton1);
+	AddWidget(mOverlay);
 }
 
 void Sexy::BonusScreen::RemovedFromManager(WidgetManager* theWidgetManager)
 {
+	RemoveWidget(mContinueButton);
+	RemoveWidget(mMenuButton);
+	RemoveWidget(mUnkButton1);
+	RemoveWidget(mOverlay);
 	Widget::RemovedFromManager(theWidgetManager);
-	theWidgetManager->RemoveWidget(mContinueButton);
-	theWidgetManager->RemoveWidget(mMenuButton);
-	theWidgetManager->RemoveWidget(mUnkButton1);
-	theWidgetManager->RemoveWidget(mOverlay);
 }
 
 void Sexy::BonusScreen::Update()
@@ -132,7 +132,9 @@ void Sexy::BonusScreen::Update()
 		{
 			if (mUpdateCnt == 180)
 			{
-				mUnkButton1->mIsOver = mUnkButton1->Contains(mWidgetManager->mLastMouseX, mWidgetManager->mLastMouseY);
+				// mLastMouseX/Y are root coordinates; mUnkButton1's rect is local to this screen.
+				Point anAbsPos = GetAbsPos();
+				mUnkButton1->mIsOver = mUnkButton1->Contains(mWidgetManager->mLastMouseX - anAbsPos.mX, mWidgetManager->mLastMouseY - anAbsPos.mY);
 			}
 		}
 		else
@@ -277,7 +279,9 @@ void Sexy::BonusScreen::ButtonPress(int theId)
 	if (theId == 2)
 	{
 		m0xe1 = true;
-		mUnkButton1->mIsOver = mUnkButton1->Contains(mWidgetManager->mLastMouseX, mWidgetManager->mLastMouseY);
+		// mLastMouseX/Y are root coordinates; mUnkButton1's rect is local to this screen.
+		Point anAbsPos = GetAbsPos();
+		mUnkButton1->mIsOver = mUnkButton1->Contains(mWidgetManager->mLastMouseX - anAbsPos.mX, mWidgetManager->mLastMouseY - anAbsPos.mY);
 	}
 }
 

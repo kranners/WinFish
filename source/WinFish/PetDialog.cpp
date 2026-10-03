@@ -87,7 +87,7 @@ void Sexy::PetDialog::Draw(Graphics* g)
 void Sexy::PetDialog::Resize(int theX, int theY, int theWidth, int theHeight)
 {
 	MoneyDialog::Resize(theX, theY, theWidth, theHeight);
-	mYesButton->Resize(270, 30, 100, mYesButton->mHeight);
+	mYesButton->Resize(theX + 270, theY + 30, 100, mYesButton->mHeight);
 }
 
 void Sexy::PetDialog::MouseLeave()

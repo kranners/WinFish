@@ -52,6 +52,7 @@
 #include "FishNamingDialog.h"
 #include "FoodDialog.h"
 #include "RegisterDialog.h"
+#include "ModConfig.h"
 
 #include <chrono>
 #include <ctime>
@@ -213,8 +214,26 @@ void LoadFishSongsTaskWrapper(void* userData)
 	gUnkBool05 = false;
 }
 
+// Fills the window around the centered 640x480 menu screens.
+class Sexy::ModBackdrop : public Widget
+{
+public:
+	ModBackdrop()
+	{
+		mZOrder = INT_MIN;
+		mMouseVisible = false;
+	}
+
+	virtual void Draw(Graphics* g)
+	{
+		g->SetColor(Color(6, 14, 24));
+		g->FillRect(0, 0, mWidth, mHeight);
+	}
+};
+
 WinFishApp::WinFishApp()
 {
+	mBackdrop = NULL;
 	mBoard = NULL;
 	mPrestoMenuData = NULL;
 	mGameSelector = NULL;
@@ -253,6 +272,8 @@ WinFishApp::WinFishApp()
 	m0x8ab = false;
 	mGameNotPlayed = true;
 	mFrameTime = 28;
+	mWidth = MOD_SCREEN_WIDTH;
+	mHeight = MOD_SCREEN_HEIGHT;
 	mGameMode = 0;
 	mAutoEnable3D = true;
 	m0x881 = true;
@@ -318,6 +339,10 @@ Sexy::WinFishApp::~WinFishApp()
 	if (mTitleScreen != NULL)
 		mWidgetManager->RemoveWidget(mTitleScreen);
 	delete mTitleScreen;
+
+	if (mBackdrop != NULL)
+		mWidgetManager->RemoveWidget(mBackdrop);
+	delete mBackdrop;
 
 	if (mStoreScreen != NULL)
 		mWidgetManager->RemoveWidget(mStoreScreen);
@@ -482,8 +507,12 @@ void Sexy::WinFishApp::Init()
 
 				mPrestoMenuData = new PrestoMenuData();
 
+				mBackdrop = new ModBackdrop();
+				mBackdrop->Resize(0, 0, mWidth, mHeight);
+				mWidgetManager->AddWidget(mBackdrop);
+
 				mTitleScreen = new TitleScreen(this);
-				mTitleScreen->Resize(0, 0, mWidth, mHeight);
+				mTitleScreen->Resize(MOD_MENU_X, MOD_MENU_Y, 640, 480);
 				mWidgetManager->AddWidget(mTitleScreen);
 
 
@@ -582,6 +611,17 @@ void Sexy::WinFishApp::LoadingThreadProc()
 		aImgId++;
 		aImgCounter = aImgId - IMAGE_TANKMASK1_ID;
 	}
+
+	// HD tank: scale the backgrounds up (cropping the top) along with the lighting and
+	// the masks cut from them above, so all three stay aligned on the bigger screen.
+	for (int i = 0; i < 6; i++)
+	{
+		ReplaceImageById(mResourceManager, IMAGE_TANKMASK1_ID + i, ModScaleImage(GetImageById(IMAGE_TANKMASK1_ID + i), 0));
+		ReplaceImageById(mResourceManager, IMAGE_AQUARIUM1_ID + i, ModScaleImage(GetImageById(IMAGE_AQUARIUM1_ID + i), MOD_BG_CROP_Y));
+		if (mShutdown)
+			return;
+	}
+	ReplaceImageById(mResourceManager, IMAGE_TANKLIGHTING_ID, ModScaleImage(IMAGE_TANKLIGHTING, 0));
 
 	aImgId = IMAGE_SCL_STINKY_ID;
 	aImgCounter = 0;
@@ -1099,6 +1139,20 @@ void Sexy::WinFishApp::RemapMusicTrack(int* theSongId, int* theSongOffset)
 	}
 }
 
+MemoryImage* Sexy::WinFishApp::ModScaleImage(Image* theImage, int theCropY)
+{
+	int aWidth = theImage->GetWidth() * MOD_BG_SCALE;
+	int aHeight = theImage->GetHeight() * MOD_BG_SCALE;
+
+	MemoryImage* aNewImage = new MemoryImage(this);
+	aNewImage->Create(aWidth, aHeight - theCropY);
+
+	Graphics g(aNewImage);
+	g.SetFastStretch(false);
+	g.DrawImage(theImage, Rect(0, -theCropY, aWidth, aHeight), Rect(0, 0, theImage->GetWidth(), theImage->GetHeight()));
+	return aNewImage;
+}
+
 Image* Sexy::WinFishApp::LoadMaskImage(Image* theImage, Image* theImageMask, int theX, int theY)
 {
 	int aImageWidth = theImage->GetWidth();
@@ -1486,7 +1540,7 @@ void Sexy::WinFishApp::DoAreYouSureSellDialog(const SexyString& theLine)
 	int aDiaY = 250;
 	if (mSimFishScreen == nullptr)
 		aDiaY = 60;
-	aDia->Resize(aDia->mX, aDiaY, aDia->mWidth, aDia->mHeight);
+	aDia->Resize(aDia->mX, aDiaY + MOD_MENU_Y, aDia->mWidth, aDia->mHeight);
 }
 
 void Sexy::WinFishApp::OpenPrestoDialog(GameObject* thePet)
@@ -1543,7 +1597,7 @@ void Sexy::WinFishApp::DoRegisterDialog()
 	{
 		RegisterDialog* aDia = new RegisterDialog(this);
 		int aPrefHght = aDia->GetPreferredHeight(420);
-		aDia->Resize((mWidth - 420) / 2, 32, 420, aPrefHght);
+		aDia->Resize((640 - 420) / 2, 32, 420, aPrefHght);
 		AddDialog(DIALOG_REGISTER ,aDia);
 	}
 	else
@@ -1563,6 +1617,19 @@ void Sexy::WinFishApp::DoDialogUnkF(int theId, bool isModal, const SexyString& t
 {
 	MoneyDialog* aDia = (MoneyDialog*) DoDialog(theId, isModal, theDiaHeader, theDiaLines, theDiaFooter, theBtnMode);
 	aDia->DisableButtons(30);
+}
+
+void Sexy::WinFishApp::AddDialog(int theDialogId, Dialog* theDialog)
+{
+	// Dialogs are laid out for 640x480. Center them, except the food picker that hangs under the HUD bar.
+	if (theDialog->mWidth != 0)
+	{
+		if (theDialogId == DIALOG_FOOD)
+			theDialog->Move(theDialog->mX + MOD_HUD_X, theDialog->mY);
+		else
+			theDialog->Move(theDialog->mX + MOD_MENU_X, theDialog->mY + MOD_MENU_Y);
+	}
+	SexyApp::AddDialog(theDialogId, theDialog);
 }
 
 void Sexy::WinFishApp::CleanDialogs()
@@ -1920,7 +1987,7 @@ void Sexy::WinFishApp::SwitchToGameSelector()
 		mCurrentProfile->Unk01();
 
 	mGameSelector = new GameSelector(this);
-	mGameSelector->Resize(0, 0, mWidth, mHeight);
+	mGameSelector->Resize(MOD_MENU_X, MOD_MENU_Y, 640, 480);
 	mWidgetManager->AddWidget(mGameSelector);
 	mWidgetManager->BringToBack(mGameSelector);
 	mWidgetManager->SetFocus(mGameSelector);
@@ -1938,7 +2005,7 @@ void Sexy::WinFishApp::SwitchToHelpScreen(bool instructions)
 	RemoveGameSelector();
 	RemoveHelpScreen();
 	mHelpScreen = new HelpScreen(this, instructions);
-	mHelpScreen->Resize(0, 0, mWidth, mHeight);
+	mHelpScreen->Resize(MOD_MENU_X, MOD_MENU_Y, 640, 480);
 	mWidgetManager->AddWidget(mHelpScreen);
 }
 
@@ -2057,14 +2124,14 @@ void Sexy::WinFishApp::DoUpdateDialog()
 {
 	Dialog* aDia = DoDialog(DIALOG_UPDATE_ASK, true, "Updates", "Do you want to check for updates to Insaniquarium? New versions may offer new features and bug fixes.  This requires an active Internet connection.", "", Dialog::BUTTONS_YES_NO);
 	int aPrefHeight = aDia->GetPreferredHeight(348);
-	aDia->Resize(146, 50, 348, aPrefHeight);
+	aDia->Resize(146 + MOD_MENU_X, 50 + MOD_MENU_Y, 348, aPrefHeight);
 }
 
 void Sexy::WinFishApp::DoContinueDialog()
 {
 	ContinueDialog* aDia = new ContinueDialog(this);
 	int aPrefHght = aDia->GetPreferredHeight(380);
-	aDia->Resize((mWidth - 380) / 2, 70, 380, aPrefHght);
+	aDia->Resize((640 - 380) / 2, 70, 380, aPrefHght);
 	AddDialog(DIALOG_CONTINUE_GAME, aDia);
 }
 
@@ -2073,7 +2140,7 @@ void Sexy::WinFishApp::DoNewUserDialog()
 	KillDialog(DIALOG_NEW_USER);
 	NewUserDialog* aDia = new NewUserDialog(this, false);
 	int aPrefHght = aDia->GetPreferredHeight(400);
-	aDia->Resize((mWidth - 400) / 2, (mHeight - aPrefHght) / 2, 400, aPrefHght);
+	aDia->Resize((640 - 400) / 2, (480 - aPrefHght) / 2, 400, aPrefHght);
 	AddDialog(DIALOG_NEW_USER, aDia);
 }
 
@@ -2344,7 +2411,7 @@ void Sexy::WinFishApp::SwitchToHighScoreScreen()
 	RemoveGameSelector();
 	RemoveHighScoreScreen();
 	mHighScoreScreen = new HighScoreScreen(this);
-	mHighScoreScreen->Resize(0, 0, mWidth, mHeight);
+	mHighScoreScreen->Resize(MOD_MENU_X, MOD_MENU_Y, 640, 480);
 	mWidgetManager->AddWidget(mHighScoreScreen);
 }
 
@@ -2355,7 +2422,7 @@ void Sexy::WinFishApp::SwitchToPetsScreen()
 	if (mBoard)
 		mBoard->PauseGame(true);
 	mPetsScreen = new PetsScreen(this);
-	mPetsScreen->Resize(0, 0, mWidth, mHeight);
+	mPetsScreen->Resize(MOD_MENU_X, MOD_MENU_Y, 640, 480);
 	mWidgetManager->AddWidget(mPetsScreen);
 }
 
@@ -2367,7 +2434,7 @@ void Sexy::WinFishApp::SwitchToHatchScreen(int thePetId)
 		mBoard->mShouldSave = false;
 	RemoveHatchScreen();
 	mHatchScreen = new HatchScreen(this, thePetId);
-	mHatchScreen->Resize(0, 0, mWidth, mHeight);
+	mHatchScreen->Resize(MOD_MENU_X, MOD_MENU_Y, 640, 480);
 	mWidgetManager->AddWidget(mHatchScreen);
 	SaveCurrentUserData();
 	RemoveBoard();
@@ -2378,7 +2445,7 @@ void Sexy::WinFishApp::SwitchToInterludeScreen()
 	CleanDialogs();
 	RemoveInterludeScreen();
 	mInterludeScreen = new InterludeScreen(this, 0);
-	mInterludeScreen->Resize(0, 0, mWidth, mHeight);
+	mInterludeScreen->Resize(MOD_MENU_X, MOD_MENU_Y, 640, 480);
 	mWidgetManager->AddWidget(mInterludeScreen);
 	mWidgetManager->SetFocus(mInterludeScreen);
 	if (mBoard == nullptr)
@@ -2395,7 +2462,7 @@ void Sexy::WinFishApp::SwitchToSimSetupScreen()
 		mBoard->PauseGame(true);
 
 	mSimSetupScreen = new SimSetupScreen(this);
-	mSimSetupScreen->Resize(0, 0, mWidth, mHeight);
+	mSimSetupScreen->Resize(MOD_MENU_X, MOD_MENU_Y, 640, 480);
 	mWidgetManager->AddWidget(mSimSetupScreen);
 }
 void Sexy::WinFishApp::SwitchToTankScreen()
@@ -2404,7 +2471,7 @@ void Sexy::WinFishApp::SwitchToTankScreen()
 	RemoveTankScreen();
 
 	mTankScreen = new TankScreen(this);
-	mTankScreen->Resize(0, 0, mWidth, mHeight);
+	mTankScreen->Resize(MOD_MENU_X, MOD_MENU_Y, 640, 480);
 	mWidgetManager->AddWidget(mTankScreen);
 	if (mBoard == nullptr)
 		mWidgetManager->BringToBack(mTankScreen);
@@ -2498,7 +2565,7 @@ void Sexy::WinFishApp::SwitchToStoryScreen(int unk)
 	}
 
 	mStoryScreen = new StoryScreen(this, aStoryId);
-	mStoryScreen->Resize(0, 0, mWidth, mHeight);
+	mStoryScreen->Resize(MOD_MENU_X, MOD_MENU_Y, 640, 480);
 	mWidgetManager->AddWidget(mStoryScreen);
 	mWidgetManager->SetFocus(mStoryScreen);
 }
@@ -2514,7 +2581,7 @@ void Sexy::WinFishApp::SwitchToStoreScreen()
 		mCurrentProfile->Unk01();
 
 	mStoreScreen = new StoreScreen(this);
-	mStoreScreen->Resize(0, 0, mWidth, mHeight);
+	mStoreScreen->Resize(MOD_MENU_X, MOD_MENU_Y, 640, 480);
 	mWidgetManager->AddWidget(mStoreScreen);
 	mWidgetManager->SetFocus(mStoreScreen);
 }
@@ -2527,7 +2594,7 @@ void Sexy::WinFishApp::SwitchToSimFishScreen()
 		mBoard->PauseGame(true);
 
 	mSimFishScreen = new SimFishScreen(this);
-	mSimFishScreen->Resize(0, 0, mWidth, mHeight);
+	mSimFishScreen->Resize(MOD_MENU_X, MOD_MENU_Y, 640, 480);
 	mWidgetManager->AddWidget(mSimFishScreen);
 	mWidgetManager->SetFocus(mSimFishScreen);
 }
@@ -2543,7 +2610,7 @@ void Sexy::WinFishApp::SwitchToBonusScreen()
 		mCurrentProfile->Unk01();
 
 	mBonusScreen = new BonusScreen(this);
-	mBonusScreen->Resize(0, 0, mWidth, mHeight);
+	mBonusScreen->Resize(MOD_MENU_X, MOD_MENU_Y, 640, 480);
 	mWidgetManager->AddWidget(mBonusScreen);
 	SaveCurrentUserData();
 	RemoveBoard();
@@ -2799,7 +2866,7 @@ void Sexy::WinFishApp::DoRenameDialog(SexyString theUserName)
 	KillDialog(DIALOG_RENAME);
 	NewUserDialog* aRenameDialog = new NewUserDialog(this, true);
 	int aPrefHght = aRenameDialog->GetPreferredHeight(400);
-	aRenameDialog->Resize((mWidth - 400) / 2, (mHeight - aPrefHght) / 2, 400, aPrefHght);
+	aRenameDialog->Resize((640 - 400) / 2, (480 - aPrefHght) / 2, 400, aPrefHght);
 	aRenameDialog->mEditWidget->SetText(theUserName, true);
 	aRenameDialog->mEditWidget->mCursorPos = theUserName.size();
 	aRenameDialog->mEditWidget->mHilitePos = 0;

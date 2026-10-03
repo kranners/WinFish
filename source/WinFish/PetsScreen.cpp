@@ -18,8 +18,8 @@ Sexy::PetsScreen::PetsScreen(WinFishApp* theApp)
 	mApp = theApp;
 	mX = 0;
 	mY = 0;
-	mWidth = theApp->mWidth;
-	mHeight = theApp->mHeight;
+	mWidth = 640;
+	mHeight = 480;
 	m0x118 = 25;
 	m0x11c = 94;
 	m0x124 = 0;
@@ -157,24 +157,23 @@ void Sexy::PetsScreen::AddedToManager(WidgetManager* theWidgetManager)
 {
 	Widget::AddedToManager(theWidgetManager);
 	for (int i = 0; i < PET_END; i++)
-		theWidgetManager->AddWidget(mPetButtons[i]);
+		AddWidget(mPetButtons[i]);
 
-	theWidgetManager->AddWidget(mOverlay);
-	theWidgetManager->AddWidget(mReturnButton);
+	AddWidget(mOverlay);
+	AddWidget(mReturnButton);
 	if(mApp->mGameMode != GAMEMODE_VIRTUAL_TANK)
-		theWidgetManager->AddWidget(mMenuButton);
+		AddWidget(mMenuButton);
 }
 
 void Sexy::PetsScreen::RemovedFromManager(WidgetManager* theWidgetManager)
 {
-	Widget::RemovedFromManager(theWidgetManager);
 	for (int i = 0; i < PET_END; i++)
-		theWidgetManager->RemoveWidget(mPetButtons[i]);
+		RemoveWidget(mPetButtons[i]);
 
-	theWidgetManager->RemoveWidget(mOverlay);
-	theWidgetManager->RemoveWidget(mReturnButton);
-	if (mApp->mGameMode != GAMEMODE_VIRTUAL_TANK)
-		theWidgetManager->RemoveWidget(mMenuButton);
+	RemoveWidget(mOverlay);
+	RemoveWidget(mReturnButton);
+	RemoveWidget(mMenuButton);
+	Widget::RemovedFromManager(theWidgetManager);
 }
 
 void Sexy::PetsScreen::Update()

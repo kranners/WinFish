@@ -14,6 +14,7 @@
 #include "Ultra.h"
 #include "Coin.h"
 #include "Res.h"
+#include "ModConfig.h"
 
 using namespace Sexy;
 
@@ -45,11 +46,11 @@ Sexy::OtherTypePet::OtherTypePet(int theX, int theY, int thePetType, int theBack
 	mYD = theY;
 
 	if (thePetType == PET_STINKY && !isPresto)
-		mYD = 360;
+		mYD = 360 + MOD_EXTRA_HEIGHT;
 	else if (thePetType == PET_RHUBARB && !isPresto)
-		mYD = 355;
+		mYD = 355 + MOD_EXTRA_HEIGHT;
 	else if (thePetType == PET_RUFUS && !isPresto)
-		mYD = 365;
+		mYD = 365 + MOD_EXTRA_HEIGHT;
 
 	UpdateNikoPosition(theBackgroundId);
 	mX = mXD;
@@ -85,7 +86,7 @@ void Sexy::OtherTypePet::Update()
 
 	UpdateCounters();
 	if ((mIsPresto && (mOtherTypePetType == PET_NIKO || mOtherTypePetType == PET_RUFUS || mOtherTypePetType == PET_RHUBARB || mOtherTypePetType == PET_STINKY))
-		&& mYD < 380.0)
+		&& mYD < 380.0 + MOD_EXTRA_HEIGHT)
 		mVY += 0.1;
 
 	if (mApp->mBoard->mTank == 5 || mOtherTypePetType != PET_STINKY) // 32
@@ -112,7 +113,7 @@ void Sexy::OtherTypePet::Update()
 
 			if (mMovementAnimationTimer == 2 || mMovementAnimationTimer == 3)
 			{
-				if (mYD >= 240.0)
+				if (mYD >= 240.0 + MOD_EXTRA_HEIGHT / 2)
 					mVY -= 0.75;
 				else
 					mVY -= 0.3;
@@ -210,7 +211,7 @@ void Sexy::OtherTypePet::Update()
 	mMovementStateChangeTimer++;
 	mChaseEntityTimer++;
 
-	if ((mMovementStateChangeTimer > 20 || (mXD <= 10.0 && mTargetVX <= 0.0)) || (mXD >= 540.0 && mYD >= 0.0))
+	if ((mMovementStateChangeTimer > 20 || (mXD <= 10.0 && mTargetVX <= 0.0)) || (mXD >= 540.0 + MOD_EXTRA_WIDTH && mYD >= 0.0))
 	{
 		mMovementStateChangeTimer = 0;
 		if (mApp->mSeed->Next() % 10 == 0)
@@ -229,42 +230,42 @@ void Sexy::OtherTypePet::Update()
 	 
 	UpdatePetSpecialAnimations();
 	
-	double aXCap = 540;
+	double aXCap = 540 + MOD_EXTRA_WIDTH;
 	if (mOtherTypePetType == PET_STINKY || mOtherTypePetType == PET_CLYDE)
-		aXCap = 550;
+		aXCap = 550 + MOD_EXTRA_WIDTH;
 	else if(mOtherTypePetType == PET_RUFUS)
-		aXCap = 560;
+		aXCap = 560 + MOD_EXTRA_WIDTH;
 
 	if (mXD > aXCap)
 		mXD = aXCap;
 	if (mXD < 10.0)
 		mXD = 10;
 
-	if (mYD > 350 && mOtherTypePetType == PET_NIKO)
+	if (mYD > 350 + MOD_EXTRA_HEIGHT && mOtherTypePetType == PET_NIKO)
 	{
-		mYD = 350;
+		mYD = 350 + MOD_EXTRA_HEIGHT;
 		mVY = 0;
 	}
-	else if (mYD > 365 && mOtherTypePetType == PET_RUFUS)
+	else if (mYD > 365 + MOD_EXTRA_HEIGHT && mOtherTypePetType == PET_RUFUS)
 	{
-		mYD = 365;
+		mYD = 365 + MOD_EXTRA_HEIGHT;
 		mVY = 0;
 	}
-	else if (mYD > 355 && mOtherTypePetType == PET_RHUBARB)
+	else if (mYD > 355 + MOD_EXTRA_HEIGHT && mOtherTypePetType == PET_RHUBARB)
 	{
-		mYD = 355;
+		mYD = 355 + MOD_EXTRA_HEIGHT;
 		mVY = 0;
 	}
-	else if (mYD > 370)
+	else if (mYD > 370 + MOD_EXTRA_HEIGHT)
 	{
-		mYD = 370;
+		mYD = 370 + MOD_EXTRA_HEIGHT;
 		mVY = 0;
 	}
 
 	if (mYD < 95)
 		mYD = 95;
 
-	if (mXD > 535 && mVX > 0.1)
+	if (mXD > 535 + MOD_EXTRA_WIDTH && mVX > 0.1)
 		mMovementState = 1;
 	if (mXD < 15 && mVX < -0.1)
 		mMovementState = 2;
@@ -400,33 +401,33 @@ void Sexy::OtherTypePet::UpdateNikoPosition(int theBgId)
 		double aY = 0.0;
 		if (theBgId == 1)
 		{
-			aX = 95;
-			aY = 253;
+			aX = MOD_BG_SPRITE_X(95, 80);
+			aY = MOD_BG_SPRITE_Y(253, 80);
 		}
 		else if (theBgId == 2)
 		{
-			aX = 175;
-			aY = 163;
+			aX = MOD_BG_SPRITE_X(175, 80);
+			aY = MOD_BG_SPRITE_Y(163, 80);
 		}
 		else if (theBgId == 3)
 		{
-			aX = 65;
-			aY = 156;
+			aX = MOD_BG_SPRITE_X(65, 80);
+			aY = MOD_BG_SPRITE_Y(156, 80);
 		}
 		else if (theBgId == 4)
 		{
-			aX = 145;
-			aY = 260;
+			aX = MOD_BG_SPRITE_X(145, 80);
+			aY = MOD_BG_SPRITE_Y(260, 80);
 		}
 		else if (theBgId == 5)
 		{
-			aX = 67;
-			aY = 185;
+			aX = MOD_BG_SPRITE_X(67, 80);
+			aY = MOD_BG_SPRITE_Y(185, 80);
 		}
 		else
 		{
-			aX = 160;
-			aY = 176;
+			aX = MOD_BG_SPRITE_X(160, 80);
+			aY = MOD_BG_SPRITE_Y(176, 80);
 		}
 		mXD = aX;
 		mYD = aY;
@@ -843,7 +844,7 @@ GameObject* Sexy::OtherTypePet::GetEntityToChase()
 	}
 	else if (mOtherTypePetType == PET_RHUBARB) // 252
 	{
-		int aYClick = aBoard->AliensInTank() ? 250 : 260;
+		int aYClick = aBoard->AliensInTank() ? 250 + MOD_EXTRA_HEIGHT : 260 + MOD_EXTRA_HEIGHT;
 
 		for (int i = 0; i < aBoard->mFishList->size(); i++)
 		{
@@ -1121,7 +1122,7 @@ void Sexy::OtherTypePet::CollideWithObject()
 	}
 	else if (mOtherTypePetType == PET_RHUBARB)
 	{
-		double anYCap = mApp->mBoard->AliensInTank() ? 260 : 270;
+		double anYCap = mApp->mBoard->AliensInTank() ? 260 + MOD_EXTRA_HEIGHT : 270 + MOD_EXTRA_HEIGHT;
 
 		for (int i = 0; i < mApp->mBoard->mFishList->size(); i++)
 		{

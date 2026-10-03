@@ -61,21 +61,21 @@ Sexy::HighScoreScreen::~HighScoreScreen()
 void Sexy::HighScoreScreen::AddedToManager(WidgetManager* theWidgetManager)
 {
 	Widget::AddedToManager(theWidgetManager);
-	theWidgetManager->AddWidget(mMenuButton);
-	theWidgetManager->AddWidget(mAdvButton);
-	theWidgetManager->AddWidget(mTimeTrialButton);
-	theWidgetManager->AddWidget(mChallengeButton);
-	theWidgetManager->AddWidget(mPersonalButton);
+	AddWidget(mMenuButton);
+	AddWidget(mAdvButton);
+	AddWidget(mTimeTrialButton);
+	AddWidget(mChallengeButton);
+	AddWidget(mPersonalButton);
 }
 
 void Sexy::HighScoreScreen::RemovedFromManager(WidgetManager* theWidgetManager)
 {
+	RemoveWidget(mMenuButton);
+	RemoveWidget(mAdvButton);
+	RemoveWidget(mTimeTrialButton);
+	RemoveWidget(mChallengeButton);
+	RemoveWidget(mPersonalButton);
 	Widget::RemovedFromManager(theWidgetManager);
-	theWidgetManager->RemoveWidget(mMenuButton);
-	theWidgetManager->RemoveWidget(mAdvButton);
-	theWidgetManager->RemoveWidget(mTimeTrialButton);
-	theWidgetManager->RemoveWidget(mChallengeButton);
-	theWidgetManager->RemoveWidget(mPersonalButton);
 }
 
 void Sexy::HighScoreScreen::Update()

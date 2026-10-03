@@ -7,6 +7,7 @@
 #include "Shadow.h"
 #include "Coin.h"
 #include "Res.h"
+#include "ModConfig.h"
 
 Sexy::BiFish::BiFish()
 {
@@ -439,7 +440,7 @@ void Sexy::BiFish::Init()
 	mIsGuppy = false;
 	mSize = SIZE_SMALL;
 	mYMin = 105;
-	mYMax = 360;
+	mYMax = 360 + MOD_EXTRA_HEIGHT;
 	mMouseVisible = gUnkBool06;
 	mCoinDropT = DetermineCoinDropT(mApp->mSeed->Next() % 250 + 200);
 	mWidth = 80;

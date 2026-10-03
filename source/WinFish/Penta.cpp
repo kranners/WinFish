@@ -7,6 +7,7 @@
 #include "Missle.h"
 #include "Coin.h"
 #include "Res.h"
+#include "ModConfig.h"
 
 Sexy::Penta::Penta()
 {
@@ -69,20 +70,20 @@ void Sexy::Penta::Update()
 
 	mEatFoodDelayTimer++;
 	mSpeedChangeTimer++;
-	if (mSpeedChangeTimer > 20 || mXD <= 10.0 || mXD >= 540.0)
+	if (mSpeedChangeTimer > 20 || mXD <= 10.0 || mXD >= 540.0 + MOD_EXTRA_WIDTH)
 	{
 		mSpeedChangeTimer = 0;
 		if (mApp->mSeed->Next() % 10 == 0)
 			mSpeedState = mApp->mSeed->Next() % 9;
 	}
 
-	if (mXD > 550.0)
-		mXD = 550.0;
+	if (mXD > 550.0 + MOD_EXTRA_WIDTH)
+		mXD = 550.0 + MOD_EXTRA_WIDTH;
 	if (mXD < 10.0)
 		mXD = 10.0;
-	if (mYD > 359.0)
+	if (mYD > 359.0 + MOD_EXTRA_HEIGHT)
 	{
-		mYD = 359.0;
+		mYD = 359.0 + MOD_EXTRA_HEIGHT;
 		mVY = 0.0;
 	}
 	if (mBoughtTimer <= 0)
@@ -100,11 +101,11 @@ void Sexy::Penta::Update()
 		mBoughtTimer--;
 	}
 
-	if (mXD > 535.0 && mVX > 0.1)
+	if (mXD > 535.0 + MOD_EXTRA_WIDTH && mVX > 0.1)
 		mVX -= 0.1;
 	if (mXD < 15.0 && mVX < -0.1)
 		mVX += 0.1;
-	if (mYD < 359.0)
+	if (mYD < 359.0 + MOD_EXTRA_HEIGHT)
 		mVY += 0.4;
 	if (mInvisible)
 		UpdateInvisible();
@@ -245,7 +246,7 @@ void Sexy::Penta::Init()
 {
 	mClip = false;
 	mType = TYPE_PENTA;
-	mYD = mApp->mSeed->Next() % 5 + 360;
+	mYD = mApp->mSeed->Next() % 5 + 360 + MOD_EXTRA_HEIGHT;
 	mY = mYD;
 	mVX = 0;
 	mVY = 0;

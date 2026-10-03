@@ -2,6 +2,7 @@
 #include "WinFishApp.h"
 #include "WinFishCommon.h"
 #include "Res.h"
+#include "ModConfig.h"
 
 using namespace Sexy;
 
@@ -45,8 +46,8 @@ const int BF_BLUE_TABLE2[30] = {
 
 BubbleMgr::BubbleMgr()
 {
-    mBubbleBounds = Rect(0, 0, 640, 480);
-    mBubbleFishBounds = Rect(0, 0, 640, 480);
+    mBubbleBounds = Rect(0, 0, MOD_SCREEN_WIDTH, MOD_SCREEN_HEIGHT);
+    mBubbleFishBounds = Rect(0, 0, MOD_SCREEN_WIDTH, MOD_SCREEN_HEIGHT);
    
     mMaxFish = 0;
     mDefaultBubbleFishVY = 0.0f;

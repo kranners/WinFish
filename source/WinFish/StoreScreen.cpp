@@ -34,8 +34,8 @@ Sexy::StoreScreen::StoreScreen(WinFishApp* theApp)
 	mY = 0;
 	mStoreButtonsX = 192;
 	mStoreButtonsXGap = 111;
-	mWidth = theApp->mWidth;
-	mHeight = theApp->mHeight;
+	mWidth = 640;
+	mHeight = 480;
 	m0x90 = 0;
 	mOverButtonId = -1;
 	mBoughtItemTimer = 0;
@@ -114,20 +114,20 @@ void Sexy::StoreScreen::AddedToManager(WidgetManager* theWidgetManager)
 	WidgetContainer::AddedToManager(theWidgetManager);
 	InitializeStoreButtons(0);
 	for (int i = 0; i < 8; i++)
-		theWidgetManager->AddWidget(mStoreButtons[i]);
-	theWidgetManager->AddWidget(mOverlay);
-	theWidgetManager->AddWidget(mBackButton);
-	theWidgetManager->AddWidget(mShellsLabel);
+		AddWidget(mStoreButtons[i]);
+	AddWidget(mOverlay);
+	AddWidget(mBackButton);
+	AddWidget(mShellsLabel);
 }
 
 void Sexy::StoreScreen::RemovedFromManager(WidgetManager* theWidgetManager)
 {
-	WidgetContainer::RemovedFromManager(theWidgetManager);
 	for (int i = 0; i < 8; i++)
-		theWidgetManager->RemoveWidget(mStoreButtons[i]);
-	theWidgetManager->RemoveWidget(mOverlay);
-	theWidgetManager->RemoveWidget(mBackButton);
-	theWidgetManager->RemoveWidget(mShellsLabel);
+		RemoveWidget(mStoreButtons[i]);
+	RemoveWidget(mOverlay);
+	RemoveWidget(mBackButton);
+	RemoveWidget(mShellsLabel);
+	WidgetContainer::RemovedFromManager(theWidgetManager);
 }
 
 void Sexy::StoreScreen::Update()
@@ -154,11 +154,7 @@ void Sexy::StoreScreen::Update()
 
 void Sexy::StoreScreen::OrderInManagerChanged()
 {
-	for (int i = 0;i < 8;i++)
-		mWidgetManager->BringToFront(mStoreButtons[i]);
-	mWidgetManager->BringToFront(mOverlay);
-	mWidgetManager->BringToFront(mBackButton);
-	mWidgetManager->BringToFront(mShellsLabel);
+	Widget::OrderInManagerChanged();
 }
 
 void Sexy::StoreScreen::DrawOverlay(Graphics* g)

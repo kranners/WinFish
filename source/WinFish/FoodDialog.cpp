@@ -124,7 +124,7 @@ void Sexy::FoodDialog::Draw(Graphics* g)
 void Sexy::FoodDialog::Resize(int theX, int theY, int theWidth, int theHeight)
 {
 	Dialog::Resize(theX, theY, theWidth, theHeight);
-	mYesButton->Resize(530, theY + 10, 100, mYesButton->mHeight);
+	mYesButton->Resize(theX + 530, theY + 10, 100, mYesButton->mHeight);
 }
 
 void Sexy::FoodDialog::MouseLeave()
